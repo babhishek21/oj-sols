@@ -1,4 +1,11 @@
-*.in
-*.out
+# .gitignore file
+# yup, this shit works recursively
+
+#general files
 test.*
 *.exe
+*.[oa]
+*.out
+
+# keep usaco `test` files as templates
+!usaco/test.*

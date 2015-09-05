@@ -1,6 +1,9 @@
 # .gitignore file
 # yup, this shit works recursively
 
+# ignore sublime-workspace files
+*.sublime-workspace
+
 #general files
 test.*
 *.exe

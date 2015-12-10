@@ -9,6 +9,7 @@ test.*
 *.exe
 *.[oa]
 *.out
+*.pdf
 
 # keep usaco `test` files as templates
 !usaco/test.*

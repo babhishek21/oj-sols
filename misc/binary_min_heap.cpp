@@ -1,5 +1,5 @@
 /**
- * Binary Min Heap. And also HeapSort.
+ * Binary Min Heap.
  */
 #include <bits/stdc++.h> // using GCC/G++
 using namespace std;

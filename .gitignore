@@ -13,3 +13,6 @@ test.*
 
 # keep usaco `test` files as templates
 !usaco/test.*
+
+# ignore any test folders
+test

@@ -63,6 +63,7 @@ for i in xrange(2, 50):
   f[i] = f[i-1] + f[i-2] + 2*g[i-1] + h[i-1]
   g[i] = f[i-1] + g[i-1]
   h[i] = f[i-1] + h[i-2]
+  # print f[i], g[i], h[i] # DEBUG
 
 n = int(raw_input())
 

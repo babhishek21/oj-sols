@@ -110,6 +110,44 @@ Node* partitionList(Node *head, int pivot) {
   return newHead;
 }
 
+/**
+ * 2.5 Sum Lists
+ * Case 1: Numbers stored in reverse order
+ * O(max(n, m)) iterative algorithm
+ * with O(max(n, m)) extra space
+ */
+Node* listSum(Node *a, Node *b) {
+  if(!a) return b;
+  if(!b) return a;
+
+  Node *newHead, *curr, *curra = a, *currb = b;
+  int carry = 0, temp;
+
+  while(curra || currb) {
+    temp = (curra ? curra->val : 0) + (currb ? currb->val : 0);
+    curr = new Node(temp%10 + carry);
+
+    if(!newHead)
+      newHead = curr;
+
+    carry = temp/10;
+    curr = curr->next;
+  }
+
+  if(carry > 0)
+    curr = new Node(carry);
+
+  return newHead;
+}
+
+/**
+ * 2.5 Sum Lists
+ * Case 2: Numbers stored in normal decimal order
+ *
+ */
+Node* listSumRec(Node *a, Node *b) {
+  int lena = getLen(a), lenb = getLen(b);
+}
 
 
 int main() {

@@ -1,4 +1,9 @@
-#include <bits/stdc++.h> // using GCC/G++
+/**
+ * CTCI 6th (Indian) Edition.
+ * Chapter 2: Linked Lists
+ * C++11 or C++14 required
+ */
+#include <bits/stdc++.h> // using GCC/G++11
 using namespace std;
 
 // linked list node class
@@ -11,7 +16,32 @@ public:
     val = x;
     next = nullptr;
   }
+
+  ~Node() {
+    cout << "Deleting: " << this << ":" << this->val << endl;
+    // for debugging
+  }
 };
+
+// utils
+void printList(Node* head) {
+  Node *curr = head;
+
+  cout << "HEAD => ";
+  while(curr != nullptr) {
+    cout << curr->val << " -> ";
+    curr = curr->next;
+  }
+  cout << "NULL" << endl;
+}
+
+void deleteList(Node* head) {
+  while(head) {
+    Node *old = head;
+    head = head->next;
+    delete old;
+  }
+}
 
 /**
  * 2.1 Remove Duplicates
@@ -33,7 +63,9 @@ void removeDuplicates(Node *head) {
     curr = curr->next;
   }
 }
-/*
+
+/**
+ * 2.1 Remove Duplicates
  * Alternate approach with Hash Table/Set
  * O(n) run time + O(n) extra space
  */
@@ -45,10 +77,10 @@ void removeDuplicatesSet(Node *head) {
   while(curr->next) {
     if(HashSet.find(curr->next->val) != HashSet.end())
       curr->next = curr->next->next;
-    else
+    else {
       HashSet.insert(curr->next->val);
-
-    curr = curr->next;
+      curr = curr->next;
+    }
   }
 }
 
@@ -65,7 +97,7 @@ Node* kthToLast(Node *head, unsigned int k) {
 
     if(count >= k) {
       if(count == k) ret = head;
-      ret = ret->next;
+      else ret = ret->next;
     }
 
     curr = curr->next;
@@ -95,7 +127,7 @@ Node* partitionList(Node *head, int pivot) {
   Node *newHead = head, *newTail = head, *curr=head;
 
   while(curr) {
-    Node *temp = curr;
+    Node *temp = curr->next;
     if(curr->val < pivot) {
       curr->next = newHead;
       newHead = curr;
@@ -103,7 +135,7 @@ Node* partitionList(Node *head, int pivot) {
       newTail->next = curr;
       newTail = newTail->next;
     }
-    curr = temp->next;
+    curr = temp;
   }
 
   newTail->next = nullptr;
@@ -120,18 +152,24 @@ Node* listSum(Node *a, Node *b) {
   if(!a) return b;
   if(!b) return a;
 
-  Node *newHead, *curr, *curra = a, *currb = b;
+  Node *newHead = nullptr, *curr = new Node(0), *curra = a, *currb = b;
   int carry = 0, temp;
 
   while(curra || currb) {
     temp = (curra ? curra->val : 0) + (currb ? currb->val : 0);
-    curr = new Node(temp%10 + carry);
+    curr->next = new Node(temp%10 + carry);
 
     if(!newHead)
-      newHead = curr;
+      newHead = curr->next;
 
     carry = temp/10;
     curr = curr->next;
+
+    if(curra)
+      curra = curra->next;
+
+    if(currb)
+      currb = currb->next;
   }
 
   if(carry > 0)
@@ -145,13 +183,198 @@ Node* listSum(Node *a, Node *b) {
  * Case 2: Numbers stored in normal decimal order
  *
  */
-Node* listSumRec(Node *a, Node *b) {
-  int lena = getLen(a), lenb = getLen(b);
+inline unsigned int getListLen(Node *node) {
+  unsigned int ret = 0;
+  while(node) {
+    ret++;
+    node = node->next;
+  }
+  return ret;
 }
 
+Node* listSumHelper(Node *a, Node *b, unsigned int la, unsigned int lb, int &carry) {
+  if(la == 0 && lb == 0)
+    return nullptr;
+
+  Node *head = new Node(0);
+
+  if(la > lb)
+    head->next = listSumHelper(a->next, b, la-1, lb, carry);
+  else if(lb > la)
+    head->next = listSumHelper(a, b->next, la, lb-1, carry);
+  else
+    head->next = listSumHelper(a->next, b->next, la-1, lb-1, carry);
+
+  int temp = (la >= lb ? a->val : 0) + (lb >= la ? b->val : 0) + carry;
+  carry = temp/10;
+  temp %= 10;
+
+  head->val = temp;
+
+  return head;
+}
+
+Node* listSumRec(Node *a, Node *b) {
+  unsigned int lena = getListLen(a), lenb = getListLen(b);
+  int carry = 0;
+
+  Node *newHead = listSumHelper(a, b, lena, lenb, carry);
+
+  if(carry > 0){
+    Node *temp = new Node(carry);
+    temp->next = newHead;
+    newHead = temp;
+  }
+
+  return newHead;
+}
+
+/**
+ * 2.6 Palindrome
+ * Recursive strategy O(n) + O(n) call stack space
+ */
+Node* isListPalinHelper(Node *head, unsigned int len) {
+  if(len <= 1)
+    return head->next;
+
+  Node *ret = isListPalinHelper(head->next, len-2);
+
+  if(ret == nullptr)
+    return nullptr;
+
+  if(head->val != ret->val)
+    return nullptr;
+
+  return (ret->next ? ret->next : ret);
+}
+
+bool isListPalin(Node* head) {
+  unsigned int len = getListLen(head);
+
+  return (isListPalinHelper(head, len) != nullptr);
+}
 
 int main() {
+  // set cout to display bool names instead of integer
+  cout << boolalpha;
 
+  // removing duplicates test
+  Node* test = new Node(3);
+  test->next = new Node(4);
+  test->next->next = new Node(5);
+  test->next->next->next = new Node(4);
+  test->next->next->next->next = new Node(5);
+  test->next->next->next->next->next = new Node(6);
+
+  cout << "Testing removeDuplicates:" << endl
+      << "Input list:" << endl;
+  printList(test);
+  removeDuplicates(test);
+  cout << "Output list:" << endl;
+  printList(test);
+
+  test->next->next->next->next = new Node(4);
+  test->next->next->next->next->next = new Node(3);
+
+  cout << "Testing removeDuplicatesSet:" << endl
+      << "Input list:" << endl;
+  printList(test);
+  removeDuplicatesSet(test);
+  cout << "Output list:" << endl;
+  printList(test);
+
+  // kth to last test
+  cout << "Testing kthToLast:" << endl
+      << "Input list:" << endl;
+  printList(test);
+  cout << "1st last element: " << kthToLast(test, 1)->val << endl
+      << "2nd last element: " << kthToLast(test, 2)->val << endl
+      << "4th last element: " << kthToLast(test, 4)->val << endl;
+
+  // delete Middle node test
+  cout << "Testing deleteMiddleNode:" << endl
+      << "Input list:" << endl;
+  printList(test);
+  deleteMiddleNode(test->next->next);
+  cout << "Deleted 3rd node. Output list:" << endl;
+  printList(test);
+
+  // partition List test
+  test->next->next->next = new Node(2);
+  test->next->next->next->next = new Node(1);
+  test->next->next->next->next->next = new Node(5);
+
+  cout << "Testing partitionList:" << endl
+      << "Input list:" << endl;
+  printList(test);
+  Node *newTest = partitionList(test, 3);
+  cout << "Partitioned list about pivot value of 3. Output list:" << endl;
+  printList(newTest);
+
+  deleteList(newTest);
+
+  // List Sum test
+  // 356 + 4778 = 5134
+  Node *aList = new Node(6);
+  aList->next = new Node(5);
+  aList->next->next = new Node(3);
+
+  Node *bList = new Node(8);
+  bList->next = new Node(7);
+  bList->next->next = new Node(7);
+  bList->next->next->next = new Node(4);
+
+  cout << "Testing listSum:" << endl
+      << "Input list:" << endl << "a: (356) ";
+  printList(aList);
+  cout << "b: (4778) ";
+  printList(bList);
+  test = listSum(aList, bList);
+  cout << "Output list: (5134) " << endl;
+  printList(test);
+
+  deleteList(test);
+
+  // List Sum Test (reversed)
+  // 653 + 8774 = 9427
+  bList->val = 9;
+
+  cout << "Testing listSum:" << endl
+      << "Input list:" << endl << "a: (653) ";
+  printList(aList);
+  cout << "b: (9774) ";
+  printList(bList);
+  test = listSumRec(aList, bList);
+  cout << "Output list: (10427) " << endl;
+  printList(test);
+
+  deleteList(aList);
+  deleteList(bList);
+
+  // Palindrome test
+  test->val = 7;
+  test->next->val = 2;
+
+  cout << "Testing isListPalin:" << endl
+      << "Input list: ";
+  printList(test);
+  cout << "Output: " << isListPalin(test) << endl;
+
+  test->next->next->val = 3;
+
+  cout << "Testing isListPalin:" << endl
+      << "Input list: ";
+  printList(test);
+  cout << "Output: " << isListPalin(test) << endl;
+
+  test->next->val = 6;
+
+  cout << "Testing isListPalin:" << endl
+      << "Input list: ";
+  printList(test);
+  cout << "Output: " << isListPalin(test) << endl;
+
+  // fin
 
   return 0;
 }

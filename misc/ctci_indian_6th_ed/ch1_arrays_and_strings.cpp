@@ -1,6 +1,7 @@
 /**
  * CTCI 6th (Indian) Edition.
  * Chapter 1: Arrays & Strings
+ * C++11 or C++14 required
  */
 #include <bits/stdc++.h> // using GCC/G++11
 using namespace std;

@@ -24,21 +24,24 @@ public:
 };
 
 // utils
-void printList(Node* head) {
+void printList(Node* head, unsigned int limit = 15) {
   Node *curr = head;
+  unsigned int count = 0;
 
   cout << "HEAD => ";
-  while(curr != nullptr) {
+  while(curr != nullptr && count < limit) {
     cout << curr->val << " -> ";
     curr = curr->next;
+    count++;
   }
-  cout << "NULL" << endl;
+  cout << (count >= limit ? "..." : "NULL") << endl;
 }
 
 void deleteList(Node* head) {
-  while(head) {
+  while(head != nullptr) {
     Node *old = head;
     head = head->next;
+    old->next = nullptr;
     delete old;
   }
 }
@@ -254,6 +257,57 @@ bool isListPalin(Node* head) {
   return (isListPalinHelper(head, len) != nullptr);
 }
 
+/**
+ * 2.7 Intersection of Lists
+ * Simple O(m+n) time algorithm
+ */
+Node* listIntersection(Node *a, Node *b) {
+  unsigned int alen = getListLen(a), blen = getListLen(b);
+  Node *curra = a, *currb = b;
+
+  while(alen > blen) {
+    curra = curra->next;
+    alen--;
+  }
+
+  while(blen > alen) {
+    currb = currb->next;
+    blen--;
+  }
+
+  while(curra && currb) {
+    if(curra == currb)
+      return curra;
+
+    curra = curra->next;
+    currb = currb->next;
+  }
+
+  return curra;
+}
+
+/**
+ * 2.8 Loop Detection
+ * Fast + slow pointer approach
+ */
+Node* getLoopHead(Node *head) {
+  Node *fast = head, *slow = head;
+
+  do {
+    slow = slow->next;
+    fast = fast->next->next;
+  } while(slow != fast);
+
+  slow = head;
+
+  while(slow != fast) {
+    slow = slow->next;
+    fast = fast->next;
+  }
+
+  return slow;
+}
+
 int main() {
   // set cout to display bool names instead of integer
   cout << boolalpha;
@@ -374,7 +428,51 @@ int main() {
   printList(test);
   cout << "Output: " << isListPalin(test) << endl;
 
-  // fin
+  // Intersection test
+  aList = new Node(3);
+  aList->next = new Node(1);
+  aList->next->next = new Node(5);
+  aList->next->next->next = new Node(9);
+  aList->next->next->next->next = new Node(7);
+  aList->next->next->next->next->next = new Node(2);
+  aList->next->next->next->next->next->next = new Node(1);
+
+  bList = new Node(4);
+  bList->next = new Node(6);
+  bList->next->next = aList->next->next->next->next;
+
+  cout << "Testing listIntersection:" << endl
+      << "Input List:" << endl
+      << "a: ";
+  printList(aList);
+  cout << "b: ";
+  printList(bList);
+  newTest = listIntersection(aList, bList);
+  cout << "Output: Intersection Point is: "
+      << newTest << " : " << newTest->val << endl;
+
+  deleteList(aList);
+  deleteList(bList);
+  delete newTest;
+
+  // Loop detection test
+  test->next->next->next->next->val = 4;
+  test->next->next->next->next->next = new Node(1);
+  test->next->next->next->next->next->next = new Node(8);
+  test->next->next->next->next->next->next->next = new Node(5);
+  test->next->next->next->next->next->next->next->next = test->next->next->next;
+
+  cout << "Testing getLoopHead:" << endl
+      << "Input List (cycled): ";
+  printList(test);
+  newTest = getLoopHead(test);
+  cout << "Output: Cycle starting point is: "
+      << newTest << " : " << newTest->val << endl;
+
+  // cleanup
+  deleteList(test);
+  delete newTest;
+  delete test;
 
   return 0;
 }

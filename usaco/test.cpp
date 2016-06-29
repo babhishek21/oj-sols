@@ -6,8 +6,9 @@ LANG: C++                  (<-- or C++11 if you prefer)
 #include <iostream>
 #include <fstream>
 #include <string>
-
 using namespace std;
+
+#define debug(x) cout << #x << " = " << x << endl;
 
 int main() {
     ofstream fout ("test.out");

@@ -451,9 +451,9 @@ int main() {
   cout << "Output: Intersection Point is: "
       << newTest << " : " << newTest->val << endl;
 
+  // deleteList(bList);
   deleteList(aList);
-  deleteList(bList);
-  delete newTest;
+  // delete newTest;
 
   // Loop detection test
   test->next->next->next->next->val = 4;
@@ -470,7 +470,7 @@ int main() {
       << newTest << " : " << newTest->val << endl;
 
   // cleanup
-  deleteList(test);
+  // deleteList(test);
   delete newTest;
   delete test;
 

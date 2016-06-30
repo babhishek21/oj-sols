@@ -37,12 +37,18 @@ void printList(Node* head, unsigned int limit = 15) {
   cout << (count >= limit ? "..." : "NULL") << endl;
 }
 
-void deleteList(Node* head) {
-  while(head != nullptr) {
+void deleteList(Node* head, int limit = -1) {
+  int count = 0;
+
+  if(limit < 0)
+    count = limit - 1;
+
+  while(head != nullptr && count < limit) {
     Node *old = head;
     head = head->next;
-    old->next = nullptr;
     delete old;
+
+    count += (limit < 0) ? 0 : 1;
   }
 }
 
@@ -452,8 +458,7 @@ int main() {
       << newTest << " : " << newTest->val << endl;
 
   deleteList(aList);
-  deleteList(bList);
-  delete newTest;
+  deleteList(bList,2);
 
   // Loop detection test
   test->next->next->next->next->val = 4;
@@ -470,9 +475,7 @@ int main() {
       << newTest << " : " << newTest->val << endl;
 
   // cleanup
-  deleteList(test);
-  delete newTest;
-  delete test;
+  deleteList(test, 8);
 
   return 0;
 }

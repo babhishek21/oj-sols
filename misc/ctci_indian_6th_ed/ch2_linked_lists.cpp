@@ -457,6 +457,7 @@ int main() {
   cout << "Output: Intersection Point is: "
       << newTest << " : " << newTest->val << endl;
 
+  // deleteList(bList);
   deleteList(aList);
   deleteList(bList,2);
 

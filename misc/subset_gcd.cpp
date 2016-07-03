@@ -1,5 +1,5 @@
 /**
- * Problem: Subset GCD (Adobe Hackathon 2015)
+ * Problem: Subset GCD (Adobe Hackathon 2015 - HackerRank)
  * Author: babhishek21
  * Description: For each number i of given n numbers, find the the number of non-empty subsets of this list, which have gcd as the i;
  * Lang: C++11

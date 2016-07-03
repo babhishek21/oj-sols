@@ -243,7 +243,9 @@ Node* listSumRec(Node *a, Node *b) {
  * Recursive strategy O(n) + O(n) call stack space
  */
 Node* isListPalinHelper(Node *head, unsigned int len) {
-  if(len <= 1)
+  if(len < 1)
+    return head;
+  if(len == 1)
     return head->next;
 
   Node *ret = isListPalinHelper(head->next, len-2);
@@ -434,6 +436,17 @@ int main() {
   printList(test);
   cout << "Output: " << isListPalin(test) << endl;
 
+  test->next->val = 2;
+  Node *temp = test->next->next;
+  test->next->next = temp->next;
+
+  cout << "Testing isListPalin:" << endl
+      << "Input list: ";
+  printList(test);
+  cout << "Output: " << isListPalin(test) << endl;
+
+  test->next->next = temp;
+
   // Intersection test
   aList = new Node(3);
   aList->next = new Node(1);
@@ -462,6 +475,7 @@ int main() {
   deleteList(bList,2);
 
   // Loop detection test
+  test->next->val = 6;
   test->next->next->next->next->val = 4;
   test->next->next->next->next->next = new Node(1);
   test->next->next->next->next->next->next = new Node(8);

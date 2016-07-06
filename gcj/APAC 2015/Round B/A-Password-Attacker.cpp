@@ -14,12 +14,12 @@ long long dp[105][105]; // dp[n][m] = numbers of ways to have n length string wi
 void prep() {
   /*
   dp[n][1] = 1
-  dp[n][m] = 0 if m > n
+  dp[n][m] = 0 if m > n (since question constrains m <= n)
   dp[n][m] = (m * dp[n-1][m-1]) + (m * dp[n-1][m]) if m <= n
     WHY?? => For a string of n-1 length, there can be two cases:
               1. You append a new distinct key. So from dp[n-1][m-1],
                 adding the mth key will give m new permutations
-              2. You choose one of the m disticnt keys available to append
+              2. You choose one of the m distinct keys available to append
                 to string. From dp[n-1][m], m choices for the key to append.
    */
 

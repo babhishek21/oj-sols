@@ -18,32 +18,26 @@ namespace paintHouse {
     if(costs.empty()) return 0;
 
     int n = costs.size();
-    for(int i=1; i<n; i++) {
-      int red = costs[i-1][0], green = costs[i-1][1], blue = costs[i-1][2];
+    vector<vector<int>> dp(n, vector<int>(3));
+    dp[0][0] = costs[0][0];
+    dp[0][1] = costs[0][1];
+    dp[0][2] = costs[0][2];
 
-      costs[i][0] += min(green, blue);
-      costs[i][1] += min(red, blue);
-      costs[i][2] += min(red, green);
+    for(int i=1; i<n; i++) {
+      int red = dp[i-1][0], green = dp[i-1][1], blue = dp[i-1][2];
+
+      dp[i][0] = min(green, blue) + costs[i][0];
+      dp[i][1] = min(red, blue) + costs[i][1];
+      dp[i][2] = min(red, green) + costs[i][2];
     }
 
-    return *(min_element(costs[n-1].begin(), costs[n-1].end()));
+    return *min_element(dp[n-1].begin(), dp[n-1].end());
   }
 
-  int minCost1(vector<vector<int>> &costs) {
-    if(costs.empty()) return 0;
-
-    int n = costs.size();
-    for(int i=1; i<n; i++) {
-      int red = costs[i][0], green = costs[i][1], blue = costs[i][2];
-
-      costs[i][0] = min(green, blue) + costs[i-1][0];
-      costs[i][1] = min(red, blue) + costs[i-1][1];
-      costs[i][2] = min(red, green) + costs[i-1][2];
-    }
-
-    return *(min_element(costs[n-1].begin(), costs[n-1].end()));
-  }
-
+  /**
+   * Paint House II
+   * // TODO
+   */
 
 }
 
@@ -58,7 +52,10 @@ int main() {
     {3,20,10}
   };
 
-  cout << minCost(costs) << " " << minCost1(costs) << endl;
+  int ans = minCost(costs);
+
+  assert(ans == 43);
+  cout << "PaintHouse1: " << ans << endl;
 
   return 0;
 }

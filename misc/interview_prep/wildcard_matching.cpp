@@ -50,51 +50,7 @@ namespace wildcardMatching {
   }
 
   /**
-   * Method 2: Iterative DP O(|s|*|p|) solution with O(|s|) extra space. (192 ms)
-   * Pointer i for string s, j for pattern string p, bool match[|s|+1] (Note: match[0] = true initially)
-   *
-   * For each char of pattern:
-   * Case 1: p[j] == '*'
-   *   For each char of string s:
-   *     match[i+1] = match[i] || match[i+1]
-   *   WHY? Because '*' can match arbitrary char and empty char.
-   * Case 2: p[j] != '*'
-   *   For each char of string s in reverse:
-   *     match[i+1] = (p[j] == '?' || (s[i] == p[j])) && match[i]
-   *   match[0] = false
-   *   WHY? Bacause all previous matches should be true. Additionally current char should match.
-   *
-   * match[|s|] gives answer
-   */
-  bool isMatchDP(string s, string p) {
-    int m = s.length(), n = p.length();
-
-    // initial checks
-    int count_stars = count(p.begin(), p.end(), '*');
-    if(count_stars == 0 && m != n)  return false;
-    if(n-count_stars > m) return false;
-
-    // init dp match[] table
-    vector<bool> match(m+1, false);
-    match[0] = true;
-
-
-    for(int j=0; j<n; j++) {
-      if(p[j] == '*') {
-        for(int i=1; i<=m; i++)
-          match[i] = match[i] || match[i-1];
-      } else {
-        for(int i=m; i>=1; i--)
-          match[i] = (p[j] == '?' || s[i-1] == p[j]) && match[i-1];
-        match[0] = false;
-      }
-    }
-
-    return match[m];
-  }
-
-  /**
-   * Method 3: Good old 2D DP O(|s|*|p|) with O(|s|*|p|) extra space solution (1680ms)
+   * Method 2: Good old 2D DP O(|s|*|p|) with O(|s|*|p|) extra space solution (1680ms)
    * bool dp[|s|+1][|p|+1] (DP array)
    * dp[i][j] stores whether s[0..i] and p[0..j] are a match
    *
@@ -133,7 +89,51 @@ namespace wildcardMatching {
 
     return dp[m][n];
   }
+
+  /**
+   * Method 3: Iterative DP O(|s|*|p|) solution with O(|s|) extra space. (192 ms)
+   * Pointer i for string s, j for pattern string p, bool match[|s|+1] (Note: match[0] = true initially)
+   *
+   * For each char of pattern:
+   * Case 1: p[j] == '*'
+   *   For each char of string s:
+   *     match[i+1] = match[i] || match[i-1]
+   *   WHY? Because '*' can match arbitrary char and empty char.
+   * Case 2: p[j] != '*'
+   *   For each char of string s in reverse:
+   *     match[i+1] = (p[j] == '?' || (s[i] == p[j])) && match[i]
+   *   match[0] = false
+   *   WHY? Bacause all previous matches should be true. Additionally current char should match.
+   *
+   * match[|s|] gives answer
+   */
+  bool isMatchDP(string s, string p) {
+    int m = s.length(), n = p.length();
+
+    // initial checks
+    int count_stars = count(p.begin(), p.end(), '*');
+    if(count_stars == 0 && m != n)  return false;
+    if(n-count_stars > m) return false;
+
+    // init dp match[] table
+    vector<bool> match(m+1, false);
+    match[0] = true;
+
+    for(int j=0; j<n; j++) {
+      if(p[j] == '*') {
+        for(int i=1; i<=m; i++)
+          match[i] = match[i] || match[i-1];
+      } else {
+        for(int i=m; i>=1; i--)
+          match[i] = (p[j] == '?' || s[i-1] == p[j]) && match[i-1];
+        match[0] = false;
+      }
+    }
+
+    return match[m];
+  }
 }
+
 
 int main() {
   using namespace wildcardMatching;

@@ -76,18 +76,6 @@ int longestIncreasingSubsequence(vector<int> arr) {
   return *max_element(dp.begin(), dp.end());
 }
 
-/**
- * Longest Increasing Subsequence [Faster solution O(nlogn)]
- * based on Patience Sorting.
- *
- * Let our pile of numbers have top element as E. Note that all numbers
- * below E in the pile are actually equal or larger than E.
- *
- * For an incoming number C, there are two cases:
- *
- *
- */
-
 int main() {
   vector<int> arr = {2, -1, 2, 3, 4, -5}; // C++11 only
 

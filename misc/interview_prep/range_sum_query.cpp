@@ -24,7 +24,6 @@ class SQRTDecomposition {
 public:
   SQRTDecomposition(vector<int> &nums): arr(nums) {
     len = ceil(nums.size()/sqrt(nums.size())); // assuming nums.empty() == false
-    blocks.clear();
     blocks.resize(len, 0);
 
     for(int i=0; i<nums.size(); i++)
@@ -67,19 +66,17 @@ public:
  * O(logn) per update
  */
 class SegTree {
-  vector<int> tree; // 1-based indexing
+  vector<int> tree; // 0-based indexing, tree[0] is kept null
   int n;
 public:
   SegTree(vector<int> &nums) {
     n = nums.size();
-    tree.clear();
     tree.resize(4*n, 0);
 
     buildSegTree(nums, 1, 0, n-1);
   }
 
   int queryRangeSum(int i, int j) {
-
     return querySegTree(1, 0, n-1, i, j);
   }
 

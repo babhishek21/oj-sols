@@ -172,7 +172,7 @@ string compressString(const string &str) {
 
 /**
  * 1.7 Rotate Matrix
- * We need to rotate matrix right my 90 degrees
+ * We need to rotate matrix right by 90 degrees
  * (which is effectively a +270 degree rotation)
  * This is similar to spiral matrix printing
  * O(N^2) algorithm

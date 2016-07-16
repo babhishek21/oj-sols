@@ -5,11 +5,36 @@
 			"path": "."
 		}
 	],
-  "settings":
-  {
-    "ensure_newline_at_eof_on_save": true,
-    "tab_size": 2,
-    "translate_tabs_to_spaces": true,
-    "trim_trailing_white_space_on_save": true
-  }
+	"settings":
+	{
+		"ensure_newline_at_eof_on_save": true,
+		"tab_size": 2,
+		"translate_tabs_to_spaces": true,
+		"trim_trailing_white_space_on_save": true
+	}
 }
+
+// Sublime Bracket Highlighter custom setting for C++
+//
+// "user_brackets": [
+//     // Angle
+//     {
+//         "name": "angle",
+//         "open": "(<)(?=[^?%]|$)",
+//         "close": "(?:(?<=[^?%-])|(?<=^))(>)",
+//         "style": "angle",
+//         "scope_exclude": [
+//             "string",
+//             "comment",
+//             "keyword.operator",
+//             "source.ruby.rails.embedded.html",
+//             "source.ruby.embedded.html"
+//         ],
+//         "language_filter": "whitelist",
+//         "language_list": [
+//             "C++"
+//         ],
+//         "plugin_library": "bh_modules.tags",
+//         "enabled": true
+//     },
+// ],

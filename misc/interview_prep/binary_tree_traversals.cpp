@@ -6,10 +6,10 @@ using namespace std;
 
 template<class T>
 ostream& operator << (ostream &stream, const vector<T> &values) {
-    stream << "[ ";
-    copy(begin(values), end(values), ostream_iterator<T>(stream, " "));
-    stream << "]";
-    return stream;
+  stream << "[ ";
+  copy(begin(values), end(values), ostream_iterator<T>(stream, " "));
+  stream << "]";
+  return stream;
 }
 
 class TreeNode {

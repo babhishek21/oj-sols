@@ -7,16 +7,17 @@ ${1:/**
  */
 
 }#include <bits/stdc++.h> // using GCC/G++
-using namespace std;
+${4:// #include "custom/prettyprint.hpp" // G++11 only
+}using namespace std;
 
-${4:#define MOD 1000000007
+${5:#define MOD 1000000007
 #define pb push_back
 #define mp make_pair
 #define debug(x) cout << #x << " : " << x << endl;
-}
 
-int main() {
-  ${5:// ios_base::sync_with_stdio(false); // for fast I/O
+
+}int main() {
+  ${6:// ios_base::sync_with_stdio(false); // for fast I/O
 
   }${0:$SELECTION}
 

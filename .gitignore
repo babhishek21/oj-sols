@@ -10,6 +10,7 @@ test.*
 *.[oa]
 *.out
 *.pdf
+*.class
 
 # keep usaco `test` files as templates
 !usaco/test.*

@@ -190,7 +190,6 @@ Node* listSum(Node *a, Node *b) {
 /**
  * 2.5 Sum Lists
  * Case 2: Numbers stored in normal decimal order
- *
  */
 inline unsigned int getListLen(Node *node) {
   unsigned int ret = 0;

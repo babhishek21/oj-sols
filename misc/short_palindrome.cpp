@@ -13,7 +13,7 @@ using namespace std;
 #define debug(x) cout << #x << " : " << x << endl;
 
 /**
- * We are looking for cobos of increasing indexes to form the character set "X_a, Y_b, Y_c, X_d"
+ * We are looking for combos of increasing indexes to form the character set "X_a, Y_b, Y_c, X_d"
  * where:
  *   X_a and X_d are the same character X occurring at index a and d
  *   Y_b and Y_c are the same character Y occurring at index b and c
@@ -21,8 +21,8 @@ using namespace std;
  *
  * Thus we need:
  *   pos[C][] is map of indexes at which character C occurs
- *   dp_left[i][Y] is the count of Y_c=i-1 for X_d=i
- *   dp_right[i][Y] is the count of Y_b=i+1 for X_a=i
+ *   dp_left[i][Y] is the count of Y_c=i-1 for X_d>=i
+ *   dp_right[i][Y] is the count of Y_b=i+1 for X_a<=i
  *
  * Once these quantities are avialable, we choose two characters X and Y (which may be same)
  * and try to count occurences of the sets "XY" and "YX". Any combination of these two sets

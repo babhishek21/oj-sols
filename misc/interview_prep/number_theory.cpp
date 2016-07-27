@@ -68,6 +68,26 @@ int LCM(int a, int b) {
 }
 
 /**
+ * Euler's Totient function sieve
+ * (to compute Totient funtion for all numbers till n, a-la-sieve)
+ */
+vector<long long> eulerTotient(unsigned int n) {
+  vector<long long> phi(n+1);
+  iota(phi.begin(), phi.end(), 0); // init
+
+  for(int i = 2; i <= n; i++) {
+    if(phi[i] == i) { // not computed yet, i must be prime
+      phi[i] = i-1;
+
+      for(int j = 2*i; j <= n; j += i) { // update phi for all multiples of i
+        // phi[j] = (phi[j] / i) * (i-i);
+        phi[j] -= (phi[j]/i);
+      }
+    }
+  }
+}
+
+/**
  * Base conversions
  */
 

@@ -59,6 +59,12 @@ inline bool isPowerOf2(unsigned int v) {
   return v && !(v & (v-1));
 }
 
+// Highest power of 2 which evenly divides a number. It also isolates the last set bit
+// (can also be used to determine if a number is a power of 2, i.e. bool(n == (n & -n)))
+inline int nearestDiv2(int n) {
+  return n & -n;
+}
+
 // count set bits (Kernighan method)
 inline unsigned int bitsetCount(unsigned int v) {
   unsigned int c;

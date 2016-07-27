@@ -27,7 +27,7 @@ ${5:#define MOD 1000000007
   <!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
   <tabTrigger>comp</tabTrigger>
   <!-- Optional: Set a scope to limit where the snippet will trigger -->
-  <scope>source.c++, source.c</scope>
+  <scope>source.c, source.cpp, source.c++</scope>
   <!-- Optional: Description to show in the menu -->
   <description>Minimalist Competitive Programming Snippet for C++ by babhishek21</description>
 </snippet>

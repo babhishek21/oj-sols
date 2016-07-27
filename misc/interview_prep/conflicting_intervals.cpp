@@ -23,7 +23,7 @@ vector<pair<Interval, Interval>> conflictingAppointments(vector<Interval> &appoi
   sort(appointments.begin(), appointments.end(), comp);
 
   for(int i=0; i<appointments.size(); i++) {
-    int lo = i+1, hi = appointments.size()-1, curr;
+    int lo = i+1, hi = appointments.size()-1, curr = i;
 
     while(lo <= hi) {
       int mid = lo + (hi-lo)/2;

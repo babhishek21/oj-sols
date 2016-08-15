@@ -3,23 +3,24 @@
 ${1:/**
  * Problem: ${2:$TM_FILENAME}
  * Author: babhishek21
- * Lang: ${3:C++11}
+ * Lang: C++11
  */
 
 }#include <bits/stdc++.h> // using GCC/G++
-${4:// #include "custom/prettyprint.hpp" // G++11 only
-}using namespace std;
+// #include "custom/prettyprint.hpp" // G++11 only
+using namespace std;
 
-${5:#define MOD 1000000007
+${3:#define MOD 1000000007
 #define pb push_back
+#define eb emplace_back
 #define mp make_pair
 #define debug(x) cout << #x << " : " << x << endl;
 
 
 }int main() {
-  ${6:// ios_base::sync_with_stdio(false); // for fast I/O
+  // ios_base::sync_with_stdio(false); // for fast I/O
 
-  }${0:$SELECTION}
+  ${0:$SELECTION}
 
   return 0;
 }

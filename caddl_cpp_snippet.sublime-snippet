@@ -32,7 +32,7 @@ template <class T> inline bool testBit(T n, int i) { return (n>>i)&1; }
 template <class T> inline void setBit(T &n, int i) { n |= (1<<i); }
 template <class T> inline void resetBit(T &n, int i) { n &= ~(1<<i); }
 template <class T> inline T lastSetBit(T n) { return n & (-n); }
-template<class T> inline unsigned int bitcount(T v) { unsigned int c; for(c = 0; v; c++) { v &= v-1; } return c; }
+template <class T> inline unsigned int bitcount(T v) { unsigned int c; for(c = 0; v; c++) { v &= v-1; } return c; }
 
 ]]></content>
   <!-- Optional: Set a tabTrigger to define how to trigger the snippet -->

@@ -1,0 +1,6 @@
+# .gitignore file
+# custom overrides for subdirectories work
+
+# keep usaco `test` files as templates
+!test.*
+

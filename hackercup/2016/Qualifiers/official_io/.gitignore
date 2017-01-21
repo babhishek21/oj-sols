@@ -1,0 +1,6 @@
+# .gitignore file
+# custom overrides for subdirectories work
+
+# keep all output files
+!*.out
+

@@ -1,6 +1,5 @@
 <snippet>
   <content><![CDATA[
-#define INF (1<<30)
 #define PI 3.14159265358979323846
 #define EPS 1e-9
 inline bool equality(double a, double b) { return fabs(a-b) < EPS; }

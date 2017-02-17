@@ -108,5 +108,5 @@ int main() {
 
     cout << num1 << " multiplied by " << num2 << " is " << mult << endl;
 
-return 0;
+    return 0;
 }

@@ -8,6 +8,7 @@ using namespace std;
 
 /**
  * Method 1: Brute force. O(n!) recursion.
+ * (See DP method below for the recurrence expression)
  */
 
 /**

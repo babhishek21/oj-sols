@@ -38,7 +38,7 @@ namespace BuySellStock {
    * at the same time (ie, you must sell the stock before you buy again).
    *
    * Simple O(n) greedy solution. The idea is to sell whenever the price is
-   * higher than previous day's price. You ight wonder what about the case when
+   * higher than previous day's price. You might wonder what about the case when
    * prices keep increasing. Well say for some time prices are like $3 $7 $9. Then
    * you can buy at $3 and sell at $7. Then buy at $7 (yes that same day) and sell
    * later at $9. This is essentially buying at $3 and selling at $9 (because the net

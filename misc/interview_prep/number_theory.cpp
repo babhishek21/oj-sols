@@ -80,7 +80,7 @@ vector<long long> eulerTotient(unsigned int n) {
       phi[i] = i-1;
 
       for(int j = 2*i; j <= n; j += i) { // update phi for all multiples of i
-        // phi[j] = (phi[j] / i) * (i-i);
+        // phi[j] = (phi[j] / i) * (i-1);
         phi[j] -= (phi[j]/i);
       }
     }

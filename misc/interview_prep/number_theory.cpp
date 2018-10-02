@@ -61,6 +61,7 @@ int iGCD(int a, int b) {
     b = a%b;
     a = temp;
   }
+  return a;
 }
 
 int LCM(int a, int b) {

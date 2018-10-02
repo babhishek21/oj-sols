@@ -89,7 +89,7 @@ public:
     int l = left(i), r = right(i);
     int smallestElement = i;
 
-    if(l < heapSize && heapArr[l] < heapArr[i])
+    if(l < heapSize && heapArr[l] < heapArr[smallestElement])
       smallestElement = l;
     if(r < heapSize && heapArr[r] < heapArr[smallestElement])
       smallestElement = r;

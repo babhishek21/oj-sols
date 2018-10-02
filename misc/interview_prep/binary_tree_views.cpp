@@ -108,7 +108,7 @@ namespace BinaryTreeViews {
   /**
    * Top view (Level order / BFS)
    * The first node seen at that horizontal distance is
-   * the one visible from the bottom
+   * the one visible from the top
    */
   vector<int> topView(TreeNode *root) {
     vector<int> result;

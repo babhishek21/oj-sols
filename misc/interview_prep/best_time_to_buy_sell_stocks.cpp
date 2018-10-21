@@ -60,7 +60,53 @@ namespace BuySellStock {
     return max_profit;
   }
 
-  // remaining TODO
+  /**
+   * Best Time to Buy and Sell Stock with Cooldown (LeetCode)
+   * Say you have an array for which the ith element is the price of a given stock on day i.
+   * Design an algorithm to find the maximum profit. You may complete as many transactions as you like 
+   * (ie, buy one and sell one share of the stock multiple times) with the following restrictions:
+   * You may not engage in multiple transactions at the same time (ie, you must sell the stock before you buy again).
+   * After you sell your stock, you cannot buy stock on next day. (ie, cooldown 1 day)
+   *
+   * O(n) DP solution based on state machines. There are three actions to perform any day: buy, sell, or cooldown.
+   * 
+   * Once you buy a stock, you get into the "buy" state. Once you sell stock, you are automatically put in the "cooldown"
+   * state for atleast a day. Once you've cooled down for atleast a day, you can go back to a "buy" state, if you wish.
+   * 
+   * So on any single day:
+   * 1. If you want to be in the "buy" state, you can sit tight on a previous purchase or buy after atleast a day of cooldown.
+   * 2. If you want to be in the "sell" state, you can sell your previously bought stock, or you can sit tight from a previous sale.
+   * 3. You can be in a cooldown stage, only by already being in there, or by selling the previous day.
+   * 
+   * In the end, the max profit is realised after you sell off any stock you might have had on the last day.
+   */
+  int maxProfitWithCooldown(vector<int>& prices) {
+    if(prices.empty()) return 0;
+    
+    int n = prices.size();
+    
+    vector<int> buy(n),     // max profit from buying stock
+    sell(n),                // max profit from selling stock
+    cool(n);                // max profit earned with cooling down for a day
+    
+    buy[0] = -prices[0];  // can buy on first day; will get net loss
+    sell[0] = 0;          // can't sell before buying
+    cool[0] = 0;          // can't cool before selling
+    
+    for(int i=1; i<n; i++) {
+      buy[i] = max(buy[i-1], cool[i-1] - prices[i]); // can keep yesterday's stock, or buy a stock today after a day of cooldown.
+      sell[i] = max(buy[i-1] + prices[i], sell[i-1]); // can sell earlier bought stock, or keep tight by not buying anything / sitting tight.
+      cool[i] = max(sell[i-1], cool[i-1]); // cooldown for a day after selling stock yesterday, or prolong an existing cooldown period / sit tight.
+    }
+    
+    return sell[n-1];  // you can never make profit by sitting tight / cooling down (zero net profit) or buying stuff (net loss).
+  }
+
+  
+
+
+
+  
 
 }
 

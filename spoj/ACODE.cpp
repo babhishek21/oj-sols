@@ -1,52 +1,47 @@
-#include <bits/stdc++.h>
+/**
+ * Problem: ACODE (SPOJ)
+ * Author: babhishek21
+ * Lang: C++11
+ */
+
+#include <bits/stdc++.h> // using GCC/G++
+// #include "custom/prettyprint.hpp" // G++11 only
 using namespace std;
 
-int dp[5001]; // dp[i] = no. of combos ending with s[i]
-string s;
+static const int MOD = 1000000007;
+static const int INF = 0x3f3f3f3f;
+static const long long INFLL = 0x3f3f3f3f3f3f3f3fLL;
+#define pb push_back
+#define eb emplace_back
+#define mp make_pair
 
-int isvalid(int i) {
-  int a = s[i-1] - '0'; // number is ab
-  int b = s[i] - '0';
+#define debug(x) cerr << #x << " : " << x << endl;
+#define whole(func, x, ...) ([&](decltype((x)) var) { return (func)(begin(var), end(var), ##__VA_ARGS__); })(x)
 
-  if(a == 0) {
-    return 0; // number of the form 0b
-  } else {
-    int c = a*10 + b;
-    if(c <= 26 and c >= 1) {
-      if(b == 0) return 1; // number of the form a0
-      else return 2; // number of the form ab
-    } else if(b != 0) return 0; // ab is invalid. 0b must be used
-  }
-
-  return -1; // invalid. This never occurs.
-}
 
 int main() {
-  cin >> s;
-  do {
-    // reset
-    memset(dp, 0, sizeof(dp));
-    // base cases
-    dp[0] = 1; // s[0] always valid
-    int valid = isvalid(1);
-    // cout << valid << " 1" << endl; // debug
-    dp[1] += ((valid == 2) ? dp[0] + 1 : 0)
-          + ((valid == 1) ? dp[0] : 0)
-          + ((valid == 0) ? 1 : 0);
+  // ios_base::sync_with_stdio(false); // for fast I/O
 
-    // the real shiz
-    for(int i=2; i<s.size(); i++) {
-      valid = isvalid(i);
-      // cout << valid  << " " << i << endl; // debug
-      dp[i] += ((valid == 2) ? dp[i-2] + dp[i-1] : 0)
-            + ((valid == 1) ? dp[i-2] : 0)
-            + ((valid == 0) ? dp[i-1] : 0);
+  string s;
+  int preprev, prev, curr;
+
+  cin >> s;
+
+  while(s != "0") {
+    preprev = 1; prev = 1; curr = 0;
+
+    for(int i=1; i<s.size(); i++) {
+      curr = (s[i] != '0') ? prev : 0;
+      curr += ((s[i-1] != '0') && ((s[i-1] - '0')*10 + (s[i]- '0') < 27)) ? preprev : 0;
+
+      preprev = prev;
+      prev = curr;
     }
 
-    // the answer
-    cout << dp[s.size()-1] << endl;
+    cout << curr << endl;
 
     cin >> s;
-  } while(s != "0");
+  }
+
   return 0;
 }

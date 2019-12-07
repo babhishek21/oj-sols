@@ -33,19 +33,19 @@ double findWater(int rows, int col, double pouredWaterAmount) {
 
   vector<double> glass((rows*(rows+1))/2, 0);
   int idx = 0;
-  double temp = 0;
+  double spill = 0;
 
   glass[idx] = pouredWaterAmount;
 
   for(int i=1; i<=rows && pouredWaterAmount > 0; i++) {
     for(int j=1; j<=i; j++, idx++) {
       if(glass[idx] > 1.0) {
-        temp = glass[idx] - 1.0;
-        glass[idx] -= temp;
+        spill = glass[idx] - 1.0;
+        glass[idx] -= spill;
       }
 
-      glass[idx + row] += temp/2;
-      glass[idx + row + 1] += temp/2;
+      glass[idx + row] += spill/2;
+      glass[idx + row + 1] += spill/2;
     }
   }
 

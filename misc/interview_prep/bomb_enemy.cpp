@@ -1,5 +1,5 @@
 /**
- * Bomb Enemy (LeetCode) (https://discuss.leetcode.com/topic/10/bomb-enemy)
+ * Bomb Enemy (LeetCode) (https://leetcode.com/problems/bomb-enemy)
  * Assume 'W' == wall, 'E' == enemy
  */
 #include <bits/stdc++.h> // using GCC/G++

@@ -21,10 +21,10 @@ static const long long INFL = 0x3f3f3f3f3f3f3f3fLL;
 /**
  * Binary Search based O(log(n)) approach. The array can be:
  *   1. The perfectly rotated array                          ===OR===
- *     e.g. {1, 2, 3, 4}    <= perfectly rotated array
+ *     e.g. {1, 2, 3, 4}    <== perfectly rotated array
  *   2. The array with a pivot point where there is a sudden drop in magnitude
  *     e.g. {5, 6, 1, 2, 3, 4}
- *              ^^^^        <= sudden change in magnitude
+ *              ^^^^        <== sudden change in magnitude
  *
  * We can use simple one-pass binary search with enhanced checking:
  *

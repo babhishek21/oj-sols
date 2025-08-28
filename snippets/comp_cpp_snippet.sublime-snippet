@@ -7,7 +7,7 @@ ${1:/**
  */
 
 }#include <bits/stdc++.h> // using GCC/G++
-// #include "custom/prettyprint.hpp" // G++11 only
+// #include "custom/prettyprint.hpp" // C++11 only
 using namespace std;
 
 ${3:static const int MOD = 1000000007;

@@ -11,6 +11,11 @@
 *.exe
 *.[oa]
 *.so
+*.pyc
+*.bin   # custom for (my)make and other build systems
+
+# pre-compiled headers
+*.h.[gp]ch
 
 # packages
 *.7z

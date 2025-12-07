@@ -12,7 +12,6 @@
 *.[oa]
 *.so
 *.pyc
-*.bin   # custom for (my)make and other build systems
 
 # pre-compiled headers
 *.h.[gp]ch
@@ -45,6 +44,9 @@ Thumbs.db
 test.*
 *.out
 *.pdf
+
+# custom for (my)make and other build systems
+*.bin
 
 # ignore any test folders
 test

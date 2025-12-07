@@ -17,9 +17,11 @@ Oh! And do take a look at the [LICENSE file](LICENSE) before you do something wi
 ### Toolchain
 1. **[🅲＋＋]**  If using Clang (ideally on macOS), copy my patched [snippets/stdc++.h](snippets/stdc++.h) header file to `/usr/local/include/bits/` (or any other `CPLUS_INCLUDE_PATH` location, in the `bits` subdiretory).
 
-    > [!IMPORTANT] Update the path to the header in the `HEADER_SRC` variable in the [Makefile](Makefile#L6).
+> [!IMPORTANT]
+> Update the path to the header in the `HEADER_SRC` variable in the [Makefile](Makefile#L6). 
 
-    - No need to worry for G++ as <bits/stdc++.h> is included pre-compiled by default.
+> [!TIP]
+> No need to worry about G++ as <bits/stdc++.h> is included pre-compiled by default.
 
 2. **[🅲＋＋]** Get [cxx-prettyprint](https://louisdx.github.io/cxx-prettyprint/) and place the header files in to `/usr/local/include/custom/` (or any other `CPLUS_INCLUDE_PATH` location, in the `custom` subdiretory). Useful for pretty-printing most STL containers.
 

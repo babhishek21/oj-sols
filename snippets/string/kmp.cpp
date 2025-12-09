@@ -8,20 +8,10 @@
 // #include "custom/prettyprint.hpp" // G++11 only
 using namespace std;
 
-static const int MOD = 1000000007;
-static const int INF = 0x3f3f3f3f;
-static const long long INFLL = 0x3f3f3f3f3f3f3f3fLL;
-#define pb push_back
-#define eb emplace_back
-#define mp make_pair
-
-#define debug(x) cerr << #x << " : " << x << endl;
-#define whole(func, x, ...) ([&](decltype((x)) var) { return (func)(begin(var), end(var), ##__VA_ARGS__); })(x)
-
 vector<int> build_overlap(const string& pat) {
-  vector<int> olp(pat.size()+1);
+  vector<int> olp(pat.size()+1);  // overlap
 
-  overlap[0] = -1;
+  olp[0] = -1;
 
   for(int i=0; i<pat.size(); i++) {
     olp[i+1] = olp[i]+1;
@@ -52,7 +42,7 @@ vector<int> kmp(const string& txt, const string& pat) {
       } else if(j == 0)
         break;
       else
-        j = overlap[j];
+        j = olp[j];
     }
 
   return ans;
@@ -60,7 +50,7 @@ vector<int> kmp(const string& txt, const string& pat) {
 
 static const int base = 101;
 
-int next_hash(const string& str, int st, int sz, int hs) {
+int next_hash(const string& str, int st, int sz, int hs) { // TODO: Recheck this hash algorithm
   int hash = 0, i = 0;
 
   if(st > 0)
@@ -74,11 +64,12 @@ int next_hash(const string& str, int st, int sz, int hs) {
   return hash;
 }
 
-int rabin_karp(const string& txt, const string& pat) {
+// See: https://liuzhenglaichn.gitbook.io/algorithm/string/rabin-karp
+int rabin_karp(const string& txt, const string& pat) { // TODO: Optimize this by precomputing hashes
   int n = txt.size(), m = pat.size(), hashpat = next_hash(pat, 0, m, 0), hashtxt = 0;
 
   for(int i=0; i<n-m+1; i++) {
-    hashtxt = next_hash(s, i, m, hashtxt);
+    hashtxt = next_hash(txt, i, m, hashtxt);
 
     if(hashtxt == hashpat && pat == txt.substr(i, m))
       return i;

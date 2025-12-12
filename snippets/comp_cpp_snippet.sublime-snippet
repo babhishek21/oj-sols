@@ -23,6 +23,7 @@ static const long long INFLL = 0x3f3f3f3f3f3f3f3fLL;
 
 }int main() {
   // ios_base::sync_with_stdio(false); // for fast I/O
+  // cin.tie(NULL); // for fast I/O; remember to flush cout before subsequent uses of cin
 
   ${0:$SELECTION}
 

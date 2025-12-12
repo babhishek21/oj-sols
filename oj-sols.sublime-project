@@ -1,30 +1,23 @@
 {
-	"folders":
-	[
+	"folders": [
 		{
 			"path": "."
 		}
 	],
-
-	"settings":
-	{
+	"settings": {
 		"ensure_newline_at_eof_on_save": true,
 		"tab_size": 2,
 		"translate_tabs_to_spaces": true,
-		"trim_trailing_white_space_on_save": true
+		"trim_trailing_white_space_on_save": "not_on_caret"
 	},
-
-	"build_systems":
-	[
+	"build_systems": [
 		{
 			"shell_cmd": "g++ -std=c++20 \"${file}\" -o \"${file_path}/${file_base_name}.bin\"",
 			// "file_regex": "^(..[^:]*):([0-9]+):?([0-9]+)?:? (.*)$",
 			"working_dir": "${file_path}",
 			"selector": "source.c++",
 			"name": "oj-sols C++20",
-
-			"variants":
-			[
+			"variants": [
 				{
 					"name": "Run",
 					"shell_cmd": "g++ -std=c++20 \"${file}\" -o \"${file_path}/${file_base_name}.bin\" && \"${file_path}/${file_base_name}.bin\"",
@@ -38,9 +31,7 @@
 			"working_dir": "${file_path}",
 			"selector": "source.c++",
 			"name": "oj-sols C++17",
-
-			"variants":
-			[
+			"variants": [
 				{
 					"name": "Run",
 					"shell_cmd": "g++ -std=c++17 \"${file}\" -o \"${file_path}/${file_base_name}.bin\" && \"${file_path}/${file_base_name}.bin\"",

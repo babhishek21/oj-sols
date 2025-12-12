@@ -11,10 +11,66 @@ using namespace std;
 #define debug(x) cerr << #x << " : " << x << endl;
 #define whole(func, x, ...) ([&](decltype((x)) var) { return (func)(begin(var), end(var), ##__VA_ARGS__); })(x)
 
+// General template for all types
+template <typename T>
+typename enable_if<!is_same<T, string>::value, vector<T>>::type
+split(const string &line, char delimiter = '\0') {
+  vector<T> result;
+  stringstream ss(line);
+
+  if (delimiter == '\0') {
+    // Split on whitespace using istream_iterator
+    copy(istream_iterator<T>{ss}, istream_iterator<T>{}, back_inserter(result));
+  } else {
+    // Split on delimiter using getline
+    string token;
+
+    while (getline(ss, token, delimiter)) {
+      if (!token.empty()) {
+        stringstream token_ss(token);
+        T value;
+
+        // Use stream extraction for type conversion
+        if (token_ss >> value) {
+          result.push_back(std::move(value));
+        }
+      }
+    }
+  }
+
+  return result;
+}
+
+// Specialization for string - more efficient
+template <typename T>
+typename enable_if<is_same<T, string>::value, vector<T>>::type
+split(const string &line, char delimiter = '\0') {
+  vector<string> result;
+  stringstream ss(line);
+
+  if (delimiter == '\0') {
+    // Split on whitespace using istream_iterator
+    copy(istream_iterator<string>{ss}, istream_iterator<string>{},
+         back_inserter(result));
+  } else {
+    // Split on delimiter using getline; directly move tokens
+    string token;
+
+    while (getline(ss, token, delimiter)) {
+      if (!token.empty()) {
+        result.push_back(std::move(token)); // Direct move, no stream conversion
+      }
+    }
+  }
+
+  return result;
+}
+
 /**
  * Dumb style: iterate, find and split
+ * Can take any string as delimiter
  */
-vector<string> split(const string &input, const string &delimiter) {
+vector<string> split_string(const string &input, const string &delimiter) {
   vector<string> result;
 
   if (delimiter.empty()) {
@@ -47,7 +103,7 @@ auto make_splitter(const string &input, const string &delimiter) {
     size_t next = input.find(delimiter, pos);
 
     if (next == string::npos) {
-      out = std::move(input.substr(pos));
+      out = move(input.substr(pos));
       pos = input.size() + 1;
       return true;
     }
@@ -118,9 +174,9 @@ struct SplitRange {
 int main() {
   // ios_base::sync_with_stdio(false); // for fast I/O
 
-  debug(split("abc,def,ghi", ","));
-  debug(split("abc,def,ghi,,", ","));
-  debug(split(",abc,def,ghi", ","));
+  debug(split_string("abc,def,ghi", ","));
+  debug(split_string("abc,def,ghi,,", ","));
+  debug(split_string(",abc,def,ghi", ","));
 
   const string input = ",,,xyz,,mno: pqr,stu,,";
   debug(input);

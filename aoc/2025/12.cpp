@@ -39,6 +39,8 @@ split(const string &line, char delimiter = '\0') {
   This is a meme solution to this AoC puzzle, for the express puzzle input provided.
   It works because all presents' shapes fit in a 3x3 grid, and the shapes are complementary
   enough to fit efficiently.
+
+  Warning: This does not work on the example puzzle input.
 */
 bool solve_lulz(const vector<int>& shapes_areas,
                 const int region_width, const int region_height,

@@ -48,7 +48,7 @@ bool solve_lulz(const vector<int>& shapes_areas,
   for(size_t i=0; i<required_presents.size(); i++)
     required_area += required_presents[i] * shapes_areas[i];
 
-  return (required_area < region_width * region_height);  // check if required presents' tile area is less than area of region
+  return (required_area <= region_width * region_height);  // check if required presents' tile area is less than area of region
 }
 
 int main() {

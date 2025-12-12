@@ -1,0 +1,4 @@
+# Don't keep input files as indicated in Advent of Code FAQs
+
+*.in
+input.txt

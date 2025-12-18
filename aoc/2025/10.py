@@ -5,8 +5,13 @@
 # Adapted from
 #   - https://www.reddit.com/r/adventofcode/comments/1pity70/comment/nta30mi/
 #   - https://www.reddit.com/r/adventofcode/comments/1pity70/comment/ntb36sb/
+#
+# TODO
+#   - Elegant bifurcation solution: https://www.reddit.com/r/adventofcode/comments/1pk87hl/2025_day_10_part_2_bifurcate_your_way_to_victory/
+#   - Gaussian elimination + multithreading: https://github.com/maneatingape/advent-of-code-rust/blob/main/src/year2025/day10.rs
 
 from collections import Counter
+from multiprocessing import Pool
 import sys
 from typing import final
 
@@ -368,9 +373,13 @@ def solve2(requirements: list[int], combos: list[tuple[int, ...]]) -> int:
     return solver.solve()
 
 
+def solve2_task(machine: tuple[str, list[tuple[int, ...]], list[int]]):
+    _, wiring_combos, joltage_requirements = machine
+    return solve2(joltage_requirements, wiring_combos)
+
+
 def main():
-    ans1 = 0
-    ans2 = 0
+    machines: list[tuple[str, list[tuple[int, ...]], list[int]]] = []
 
     for line in sys.stdin:
         line = line.rstrip("\n")
@@ -382,8 +391,20 @@ def main():
 
         # print(machine_lights, wiring_combos)
 
-        ans1 += solve1(machine_lights, wiring_combos)
-        ans2 += solve2(joltage_requirements, wiring_combos)
+        machines.append((machine_lights, wiring_combos, joltage_requirements))
+
+        # ans1 += solve1(machine_lights, wiring_combos)
+        # ans2 += solve2(joltage_requirements, wiring_combos)
+
+    with Pool() as pool:
+        ans2 = sum(
+            pool.imap_unordered(solve2_task, machines, chunksize=1)
+        )  # solves puzzle input in about ~145secs
+
+    ans1 = sum(
+        solve1(machine_lights, wiring_combos)
+        for machine_lights, wiring_combos, _ in machines
+    )  # very fast
 
     print("answers:", ans1, ans2)
 

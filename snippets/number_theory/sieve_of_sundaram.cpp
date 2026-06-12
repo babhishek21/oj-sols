@@ -20,7 +20,7 @@ void sieve_of_sundaram(int n = MAXN) {
 }
 
 inline bool isprime(const int x) {
-  return (x == 2) || (x > 2 && (x&1 != 0) && !sieve[(x-1)/2]);
+  return (x == 2) || (x > 2 && ((x&1) != 0) && !sieve[(x-1)/2]);
 }
 
 int main() {

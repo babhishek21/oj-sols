@@ -67,14 +67,14 @@ void updateTreeLazyRange(int node, int start, int end, int l, int r, int addVal)
 
   // check if leaf node
   if(start == end) {
-    tree[node] = newVal;
+    tree[node] = addVal;
     return;
   }
 
   // not a leaf node. Recurse for children
   int mid = start + (end-start)/2;
-  updateTreeLazyRange(2*node+1, start, mid, l, r, newVal);
-  updateTreeLazyRange(2*node+2, mid+1, end, l, r, newVal);
+  updateTreeLazyRange(2*node+1, start, mid, l, r, addVal);
+  updateTreeLazyRange(2*node+2, mid+1, end, l, r, addVal);
 
   // write merge logic here
   tree[node] = tree[2*node+1] + tree[2*node+2];

@@ -59,7 +59,7 @@ int main() {
   }
 
   for(int i=0; i<test.size(); i++) {
-    if(!(query(i+1) == pre[i])) {
+    if(query(i+1) != pre[i]) {
       debug(i)
       debug(query(i+1))
       debug(pre[i])

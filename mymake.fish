@@ -9,9 +9,22 @@ function mymake --wraps make --description "Run make from the git repo root"
         return 1
     end
 
-    # 3. Run make
+    # 3. Map arguments to targets (strip extensions, prepend compiler prefix)
+    set -l args
+    for arg in $argv
+        switch $arg
+            case '*.cpp'
+                set -a args cpp.(string replace -r '\.cpp$' '' -- $arg)
+            case '*.java'
+                set -a args java.(string replace -r '\.java$' '' -- $arg)
+            case '*'
+                set -a args $arg
+        end
+    end
+
+    # 4. Run make
     # -f: Point to the Makefile at the repo root
     # -C: Tell make to execute 'as if' it were in the current directory ($PWD)
-    # $argv: Pass all arguments (e.g., 'ProblemA', 'clean', 'java.ProblemB')
-    make -f "$repo_root/Makefile" -C "$PWD" CP_MODE=1 $argv
+    # $args: Pass all arguments (e.g., 'ProblemA', 'clean', 'java.ProblemB')
+    make -f "$repo_root/Makefile" -C "$PWD" CP_MODE=1 $args
 end

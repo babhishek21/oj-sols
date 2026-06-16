@@ -21,6 +21,9 @@ PCH_FILE = $(REPO_ROOT)/stdc++.h.gch
 CXX = g++
 JAVAC = javac
 
+# Default compiler flags
+CXXFLAGS = -std=c++17 -O2
+
 # PCH Logic (Mac/Clang only)
 IS_CLANG := $(shell $(CXX) --version 2>/dev/null | grep -i clang)
 IS_OVERRIDE := $(filter command line,$(origin CXXFLAGS))
@@ -93,7 +96,7 @@ java.%.bin: %.java
 # PCH Generation
 $(PCH_FILE):
 	@echo "[Init] Generating PCH..."
-	$(CXX) -x c++-header $(HEADER_SRC) -o $(PCH_FILE)
+	$(CXX) $(CXXFLAGS) -x c++-header $(HEADER_SRC) -o $(PCH_FILE)
 
 .PHONY: clean
 clean:

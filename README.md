@@ -36,3 +36,6 @@ Oh! And do take a look at the [LICENSE file](LICENSE) before you do something wi
         - Run `mymake java.thing.bin` to force compile `thing.java` into `thing.bin` (bash script that runs the generated Java class file)
         - Run `mymake clean` to clean out executable and generated files
         - Where Clang is available, `make` will try to precompile the <bits/stdc++.h> header for use.
+
+        > [!TIP]
+        > You can also try passing a full path of a C++ or Java source file to `mymake`.

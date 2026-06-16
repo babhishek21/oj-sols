@@ -1,0 +1,113 @@
+<snippet>
+  <content><![CDATA[
+${1:/* Split String */
+vector<string> split(const string &s, char delim) {
+  vector<string> res;
+  istringstream ss(s); string item;
+  while (getline(ss, item, delim)) res.push_back(item);
+  return res;
+\}
+
+/* Heap shortcuts */
+template <typename T> using max_heap = priority_queue<T>;
+template <typename T> using min_heap = priority_queue<T, vector<T>, greater<T>>;
+
+}${2:/*
+Fenwick Tree (BIT) - 1-indexed.
+pow2f == bit_floor(n)
+
+To make Frequency BIT:
+  add(val, 1) for each element → an order-statistic tree.
+  kth smallest element = max_prefix(k-1)   (compressed to 0..n-1)
+*/
+template <typename T> struct BIT {
+  int n; vector<T> tree; int pow2f;
+  BIT(int n) : n(n), tree(n + 1), pow2f(n ? (1u << (31 - __builtin_clz(n))) : 0) {\}
+
+  void add(int i, T v) { for (; i <= n; i += i & -i) tree[i] += v; \}
+  T sum(int i) { T s = 0; for (; i > 0; i -= i & -i) s += tree[i]; return s; \}
+  T sum(int l, int r) { return sum(r) - sum(l - 1); \}
+
+  int max_prefix(T c) {
+    T v{\}; int at = 0;
+    for (int len = pow2f; len; len >>= 1)
+      if (at + len <= n && v + tree[at + len] <= c)
+        v += tree[at + len], at += len;
+    return at;
+  \}
+\};
+
+/*
+Coordinate Compression
+usage: int idx = lower_bound(compressed.begin(), compressed.end(), val) - compressed.begin();
+*/
+template <typename T> vector<T> compress(vector<T> v) {
+  sort(v.begin(), v.end());
+  v.erase(unique(v.begin(), v.end()), v.end());
+  return v;
+\}
+
+}${3:/*
+Safe Hash for unordered_map/set — defeats anti-hash-test on Codeforces/CodeChef
+usage: unordered_map<int, int, safe_hash> mp;
+*/
+struct safe_hash {
+  static uint64_t splitmix64(uint64_t x) {
+    // http://xorshift.di.unimi.it/splitmix64.c
+    x += 0x9e3779b97f4a7c15;
+    x = (x ^ (x >> 30)) * 0xbf58476d1ce4e5b9;
+    x = (x ^ (x >> 27)) * 0x94d049bb133111eb;
+    return x ^ (x >> 31);
+  \}
+  size_t operator()(uint64_t x) const {
+    static const uint64_t FIXED_SEED_FROM_RANDOM = chrono::steady_clock::now().time_since_epoch().count();
+    return splitmix64(x + FIXED_SEED_FROM_RANDOM);
+  \}
+\};
+
+/*
+Pair hash (built on safe_hash via hash_combine)
+usage: unordered_map<pair<int,int>, int, safe_pair_hash> pair_mp
+*/
+struct safe_pair_hash {
+  template <typename T1, typename T2>
+  size_t operator()(const pair<T1, T2> &p) const {
+    return safe_hash{\}(((uint64_t)hash<T1>{\}(p.first) << 32) ^ hash<T2>{\}(p.second));
+  \}
+\};
+
+}${4:/* PBDS; using GNU/G++ only */
+#if __has_include(<ext/pb_ds/assoc_container.hpp>)
+#define USING_GNU_PB_DS
+#include <ext/pb_ds/assoc_container.hpp>
+
+// Order Statistic Tree
+template <typename K, typename V, typename Comp = less<K>>
+using ordered_map = __gnu_pbds::tree<
+  K, V, Comp,
+  __gnu_pbds::rb_tree_tag,
+  __gnu_pbds::tree_order_statistics_node_update
+>;
+
+template <typename K, typename Comp = less<K>>
+using ordered_set = ordered_map<K, __gnu_pbds::null_type, Comp>;
+
+template <typename K, typename V>
+using ordered_multimap = ordered_map<K, V, less_equal<K>>;
+
+template <typename K>
+using ordered_multiset = ordered_set<K, less_equal<K>>;
+
+// PBDS Hash Map/Set — defeats anti-hash-test, faster than unordered_map
+template <typename K, typename V, typename Hash = safe_hash>
+using hash_map = __gnu_pbds::gp_hash_table<K, V, Hash>;
+
+template <typename K, typename Hash = safe_hash>
+using hash_set = hash_map<K, __gnu_pbds::null_type, Hash>;
+#endif
+}
+]]></content>
+  <tabTrigger>cmisc</tabTrigger>
+  <scope>source.c, source.cpp, source.c++</scope>
+  <description>Miscellaneous Competitive Programming utilities: pq, hash, BIT, compress, string split, PBDS</description>
+</snippet>

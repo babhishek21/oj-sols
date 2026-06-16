@@ -6,19 +6,21 @@ ${1:/**
  * Lang: C++17
  */
 
-}#include <bits/stdc++.h> // using GCC/G++
-// #include "custom/prettyprint.hpp" // C++11 and above
+}#include <bits/stdc++.h>             // using GCC/G++
+// #include "custom/prettyprint.hpp"  // C++11 and above
+// #include "custom/debugprint.hpp"   // debug printing utils
 using namespace std;
 
-${3:static const int MOD = 1000000007;
-static const int INF = 0x3f3f3f3f;
-static const long long INFLL = 0x3f3f3f3f3f3f3f3fLL;
+${3:constexpr int MOD = 1000000007;
+constexpr int INF = 0x3f3f3f3f;
+constexpr long long INFLL = 0x3f3f3f3f3f3f3f3fLL;
+
 #define pb push_back
 #define eb emplace_back
-#define mp make_pair
 
-#define debug(x) cerr << #x << " : " << x << endl;
 #define whole(func, x, ...) ([&](decltype((x)) var) \{ return (func)(begin(var), end(var), ##__VA_ARGS__); \})(x)
+#define debug(x) cerr << #x << " : " << x << endl
+// #define debug(...) _dbg(#__VA_ARGS__, __VA_ARGS__)
 
 
 }int main() {

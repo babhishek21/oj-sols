@@ -5,7 +5,7 @@
  * There are a few different ways to do this:
  * 1. Modified merge sort
  * 2. Order Statistics Tree (self-balanced BST / RB-Tree augmented with rank and order in nodes)
- * 3. Segment Tree
+ * 3. Segment Tree (Wavelet Tree)
  * 4. BIT (Fenwick Tree)
  * 5. Tries
  *

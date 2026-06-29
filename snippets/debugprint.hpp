@@ -97,4 +97,39 @@ void _dbg(const char* s, const H& h, const T&... t) {
   _dbg(comma ? comma + 2 : "", t...);
 }
 
+// ---- OSTREAM macro for struct printing ----
+#define __OSTREAM_CONCAT(a, b) a ## b
+#define __OSTREAM_EVAL_CONCAT(a, b) __OSTREAM_CONCAT(a, b)
+#define __FOR_EACH_1(m, x) m(x)
+#define __FOR_EACH_2(m, x, ...) m(x) __FOR_EACH_1(m, __VA_ARGS__)
+#define __FOR_EACH_3(m, x, ...) m(x) __FOR_EACH_2(m, __VA_ARGS__)
+#define __FOR_EACH_4(m, x, ...) m(x) __FOR_EACH_3(m, __VA_ARGS__)
+#define __FOR_EACH_5(m, x, ...) m(x) __FOR_EACH_4(m, __VA_ARGS__)
+#define __FOR_EACH_6(m, x, ...) m(x) __FOR_EACH_5(m, __VA_ARGS__)
+#define __FOR_EACH_7(m, x, ...) m(x) __FOR_EACH_6(m, __VA_ARGS__)
+#define __FOR_EACH_8(m, x, ...) m(x) __FOR_EACH_7(m, __VA_ARGS__)
+#define __ARG_N(_1,_2,_3,_4,_5,_6,_7,_8,N,...) N
+#define __ARG_COUNT(...) __ARG_N(__VA_ARGS__,8,7,6,5,4,3,2,1)
+#define __FOR_EACH(m, ...) __OSTREAM_EVAL_CONCAT(__FOR_EACH_, __ARG_COUNT(__VA_ARGS__))(m, __VA_ARGS__)
+
+#define __PRINT_MEMBER(x) os << (first ? first = false, "" : ", ") << #x << " = " << t.x;
+
+#define __PRINT_COMPACT(x) os << (first ? first = false, "" : ",") << t.x;
+
+#define PRETTY_OSTREAM(T, ...)                                                \
+  friend auto operator<<(std::ostream& os, const T& t) -> std::ostream& {     \
+    os << #T << " { ";                                                        \
+    bool first = true;                                                        \
+    __FOR_EACH(__PRINT_MEMBER, __VA_ARGS__)                                   \
+    return os << " }";                                                        \
+  }
+
+#define PRETTY_OSTREAM_COMPACT(T, ...)                                        \
+  friend auto operator<<(std::ostream& os, const T& t) -> std::ostream& {     \
+    os << #T << "{";                                                          \
+    bool first = true;                                                        \
+    __FOR_EACH(__PRINT_COMPACT, __VA_ARGS__)                                  \
+    return os << "}";                                                         \
+  }
+
 #endif  // H_DEBUG_PRINT

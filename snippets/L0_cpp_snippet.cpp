@@ -14,6 +14,7 @@ constexpr long long INFLL = 0x3f3f3f3f3f3f3f3fLL;
 
 #define pb push_back
 #define eb emplace_back
+#define mp make_pair
 
 #define whole(func, x, ...) ([&](decltype((x)) var) { return (func)(begin(var), end(var), ##__VA_ARGS__); })(x)
 #define debug(x) cerr << #x << " : " << x << endl;

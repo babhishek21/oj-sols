@@ -44,22 +44,12 @@ To make Frequency BIT:
   add(val, 1) for each element → an order-statistic tree.
 */
 template <typename T> struct BIT {
-  using OP = function<T(T, T)>;
-
   int n; vector<T> tree;
-  OP op = plus<T>{}, inverse_op = minus<T>{};
-
   BIT(int n) : n(n), tree(n + 1) {}
-  BIT(int n, OP op_fn, OP inv_op_fn): n(n), tree(n + 1), op(move(op_fn)), inverse_op(move(inv_op_fn)) {}
 
-  void add(int i, T v) { add(i, v, op); }
-  void add(int i, T v, OP op) { for (; i <= n; i += i & -i) tree[i] = op(tree[i], v); }
-
-  T sum(int i) { return sum(i, op); }
-  T sum(int i, OP op) { T s = 0; for (; i > 0; i -= i & -i) s = op(s, tree[i]); return s; }
-
-  T sum(int l, int r) { return sum(l, r, op, inverse_op); }
-  T sum(int l, int r, OP op, OP inverse_op) { return inverse_op(sum(r, op), sum(l - 1, op)); }
+  void add(int i, T v) { for (; i <= n; i += i & -i) tree[i] += v; }
+  T sum(int i) { T s = 0; for (; i > 0; i -= i & -i) s += tree[i]; return s; }
+  T sum(int l, int r) { return sum(r) - sum(l - 1); }
 };
 
 namespace offline_1D_BIT {
@@ -130,26 +120,21 @@ namespace online_2D_BIT {
   - the second layer Fenwick Tree that is the actual frequency BIT over the coordinate compressed P[i]
   */
   struct Node {
-    vector<int> coords, bit;
+    vector<int> coords;
+    BIT<int> bit = BIT<int>(0);
 
     void enumerate(int val) { // val must already be in coords
       auto it = whole(lower_bound, coords, val);
-      int idx = distance(coords.begin(), it) + 1;
+      int idx = distance(coords.begin(), it);
 
-      for(; idx < bit.size(); idx += idx & -idx)
-        bit[idx]++;
+      bit.add(idx+1, 1);
     }
 
     int query_lt(int limit) {  // query number of elements < limit
       auto it = whole(lower_bound, coords, limit);   // first index >= limit
       int idx = distance(coords.begin(), it);  // idx+1 is the first index in BIT for element >= limit
 
-      int cnt = 0;
-
-      for(; idx > 0; idx -= idx & -idx)
-        cnt += bit[idx];
-
-      return cnt;
+      return bit.sum(idx);
     }
   };
 
@@ -192,7 +177,7 @@ namespace online_2D_BIT {
       whole(sort, node.coords);
       node.coords.erase(whole(unique, node.coords), node.coords.end());
 
-      node.bit.assign(node.coords.size()+1, 0);
+      node.bit = BIT<int>(node.coords.size());
     }
   }
 

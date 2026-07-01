@@ -77,76 +77,82 @@ namespace merge_sort_tree {
 }
 
 namespace wavelet_tree {
-  // Lets you run order statistic queries on a value range [u, v]
-
   struct Node {
-    int lo, hi, // the lowest and highest value elements represented by this node
-      left_node, right_node;  // indices of subtree nodes
-    vector<int> kos; // prefix count of elements going to the left child. 1-based indexing
+    int lo, hi;             // value range [lo, hi] represented by this node
+    int left_node, right_node;  // indices of subtree nodes (0 = none)
+    vector<int> kos;        // kos[i] = count of elements <= mid among first i elements
+    vector<long long> prfs; // prfs[i] = prefix sum of first i elements
   };
 
-  Node tree[2*MAXN];
+  vector<Node> tree;
   int nodes_cnt = 0;
 
-  // build wavelet tree from array iterator range [from, to) for elements' value range [lo, hi]
-  int build(int* from, int *to, int lo, int hi) {
+  // build wavelet tree from array iterator range [from, to) for value range [lo, hi].
+  // When build_sums is false, prfs[] is not populated (saves memory + time); the
+  // sum-dependent ops (rangeSum, sumLTEk) will then return wrong answers.
+  int build(int *from, int *to, int lo, int hi, bool build_sums = true) {
     if(from >= to) return 0;
+
+    /*
+    The tree is a binary tree over the value range [lo, hi]; node count is bounded
+    by 2*σ - 1 (full binary tree with σ = hi-lo+1 leaves; where σ is alphabet size),
+    reached when every value in the range is present. Pre-reserve so recursive calls
+    never reallocate and dangle references. (tree is 1-indexed; slot 0 unused.)
+    */
+    if(tree.empty()) tree.resize(2 * (hi - lo + 1));
 
     int curr = ++nodes_cnt;
     auto &node = tree[curr];
 
-    // init curr node
     node.lo = lo;
     node.hi = hi;
+    node.left_node = node.right_node = 0;
 
-    if(lo == hi) {  // leaf node
-      node.left_node = node.right_node = -1;
+    if(lo == hi) {  // leaf node: no kos needed, no children.
+      if(build_sums) {
+        node.prfs.reserve(to - from + 1);
+        node.prfs.pb(0);
+        for(auto it = from; it != to; ++it)
+          node.prfs.pb(node.prfs.back() + (*it));
+      }
       return curr;
     }
 
-    // build the kos prefix array
+    int mid = lo + (hi - lo) / 2;
+
     node.kos.reserve(to - from + 1);
     node.kos.pb(0);
-
-    int mid = lo + (hi - lo) / 2;
-    for(auto it = from; it != to; it++)
+    if(build_sums) {
+      node.prfs.reserve(to - from + 1);
+      node.prfs.pb(0);
+    }
+    for(auto it = from; it != to; ++it) {
       node.kos.pb(node.kos.back() + (*it <= mid));
+      if(build_sums)
+        node.prfs.pb(node.prfs.back() + (*it));
+    }
 
-    // partition elements into <= mid and > mid
-    auto pivot = stable_partition(from, to, [=](const int &x) {
-      return x <= mid;
-    });
+    auto pivot = stable_partition(from, to, [=](const int &x) { return x <= mid; });
 
-    // build subtrees
-    node.left_node = build(from, pivot, lo, mid);
-    node.right_node = build(pivot, to, mid+1, hi);
+    tree[curr].left_node  = build(from, pivot, lo, mid, build_sums);
+    tree[curr].right_node = build(pivot, to, mid + 1, hi, build_sums);
 
     return curr;
   }
 
-  // query curr subtree for count of elements in index range [l, r] which are < k
-  int query_LTk(int curr, int l, int r, int k) {
-    if(l > r || !curr)
-      return 0;
+  // count of elements in index range [l, r] (1-indexed) with value < k.
+  int LTk(int curr, int l, int r, int k) {
+    if(l > r || !curr) return 0;
+    auto &node = tree[curr];
 
-    auto& node = tree[curr];
+    if(k <= node.lo) return 0;
+    if(k > node.hi) return r - l + 1;
 
-    // if lowest item of node >= k, none of this node's items are useful
-    if(node.lo >= k)
-      return 0;
-
-    // if highest item of node < k, this entire node's items are useful
-    if(node.hi < k)
-      return r - l + 1;
-
-    int lkos = node.kos[l-1];
+    int lkos = node.kos[l - 1];
     int rkos = node.kos[r];
 
-    // recurse subtrees
-    int left_cnt = query_LTk(node.left_node, lkos+1, rkos, k);
-    int right_cnt = query_LTk(node.right_node, l-lkos, r-rkos, k);
-
-    return left_cnt + right_cnt;
+    return LTk(node.left_node, lkos + 1, rkos, k)
+         + LTk(node.right_node, l - lkos, r - rkos, k);
   }
 }
 
@@ -159,12 +165,12 @@ void preprocess() {
   }
 
   // merge_sort_tree::build(p, 1, 1, n);
-  wavelet_tree::build(p, p+n, -1, n-1);
+  wavelet_tree::build(p, p+n, -1, n-1, false);
 }
 
 int query_range(int l, int r) { // 1-indexed range [l, r]
   // return merge_sort_tree::queryLT(1, 1, n, l, r, l-1);
-  return wavelet_tree::query_LTk(1, l, r, l-1);
+  return wavelet_tree::LTk(1, l, r, l-1);
 }
 
 int main() {

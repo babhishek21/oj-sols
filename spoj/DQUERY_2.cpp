@@ -3,23 +3,21 @@
  * Author: babhishek21
  * Lang: C++17
  *
- * Solved using BIT / Fenwick Tree.
+ * Solved online using Merge Sort Tree & Wavelet Tree.
  *
- * Option 1: BIT + Offline queries
- * - sort queries by ending boundary (i.e. by increasing R for query range [L..R])
- * - process the array by keeping track of the latest seen instance of a value in the BIT
- *   i.e. if you encounter an element at idx j, previously seen at idx i do: BIT.add(i, -1), BIT.add(j, 1)
- * - query(l, r) == BIT.sum(r) - BIT.sum(l-1)
- *   wherein BIT.sum(i) is count of all latest seen instances of unique elements until index i
+ * Option 1: Merge Sort Tree
+ * - Similar to sqrt decomposition + binary search solution
+ * - In this case, instead of flat decomposed blocks, we have a segment tree-like hierarchy, traversing which we apply
+ *  binary search on relevant nodes
+ * - Obviously, need to keep the subarray sorted within each node
  *
  *   Related: KQUERY
  *
- * Option 2: 2D BIT (to keep Online queries)
- * - needs coordinate compression to save on memory
- * - store (i, P[i]) for every arr[i], where P[i] is the previously seen index for value of arr[i]
- * - then we need to query for i in [L..R] on dimension 1 and P[i] in [-1..(L-1)] on dimension 2.
+ * Option 2: Wavelet Tree
+ * - Wavelet Tree already gives kth order statistic search and limits search as well
+ * - Apply the same logic as Merge Sort Tree / sqrt decomposition, on previous occurence index P[]
  *
- *  Related: KQUERY, GIVEAWAY
+ *  Related: KQUERY, INVCNT
  */
 
 #include <bits/stdc++.h>             // using GCC/G++
@@ -31,216 +29,164 @@ using namespace std;
 #define eb emplace_back
 #define mp make_pair
 
-#define whole(func, x, ...) ([&](decltype((x)) var) { return (func)(begin(var), end(var), ##__VA_ARGS__); })(x)
+#define whole(func, x, ...) ([&](decltype((x)) var) { return (func)(std::begin(var), std::end(var), ##__VA_ARGS__); })(x)
 // #define debug(x) cerr << #x << " : " << x << endl
 #define debug(...) _dbg(#__VA_ARGS__, __VA_ARGS__)
 
 constexpr int MAXN = 30004;
 
-/*
-Fenwick Tree (BIT) - 1-indexed.
+int n, arr[MAXN],
+  p[MAXN]; // index with previous occurrence of arr[i]
 
-To make Frequency BIT:
-  add(val, 1) for each element → an order-statistic tree.
-*/
-template <typename T> struct BIT {
-  using OP = function<T(T, T)>;
+namespace merge_sort_tree {
+  vector<int> segtree[4 * MAXN];
 
-  int n; vector<T> tree;
-  OP op = plus<T>{}, inverse_op = minus<T>{};
-
-  BIT(int n) : n(n), tree(n + 1) {}
-  BIT(int n, OP op_fn, OP inv_op_fn): n(n), tree(n + 1), op(move(op_fn)), inverse_op(move(inv_op_fn)) {}
-
-  void add(int i, T v) { add(i, v, op); }
-  void add(int i, T v, OP op) { for (; i <= n; i += i & -i) tree[i] = op(tree[i], v); }
-
-  T sum(int i) { return sum(i, op); }
-  T sum(int i, OP op) { T s = 0; for (; i > 0; i -= i & -i) s = op(s, tree[i]); return s; }
-
-  T sum(int l, int r) { return sum(l, r, op, inverse_op); }
-  T sum(int l, int r, OP op, OP inverse_op) { return inverse_op(sum(r, op), sum(l - 1, op)); }
-};
-
-namespace offline_1D_BIT {
-  unordered_map<int, int> last_seen_index;
-  BIT<int> ft(MAXN);
-
-  struct OP {
-    int typ, // type = 0 for input, 1 for queries
-      idx, l, r, val;
-
-    OP(int idx, int val): typ(0), idx(idx), r(idx), val(val) {}   // input
-    OP(int idx, int l, int r): typ(1), idx(idx), l(l), r(r) {}   // query
-
-    bool operator< (const OP& other) const {
-      return tie(r, typ) < tie(other.r, other.typ); // sort by range end boundary first, and then queries before input
-    }
-  };
-
-  void solve() {
-    int n, q, l, r, x;
-    vector<OP> ops;
-    vector<int> ans;
-
-    cin >> n;
-    ops.reserve(n);
-
-    for(int i=0; i<n; i++) {
-      cin >> x;
-      ops.eb(i+1, x);
+  void build(int* array, int node, int start, int end) {  // 1-based indexing
+    if(start == end) {
+      segtree[node].pb(array[start-1]);
+      return;
     }
 
-    cin >> q;
-    ops.reserve(n+q);
+    int mid = start + (end - start) / 2;
 
-    for(int i=0; i<q; i++) {
-      cin >> l >> r;
-      ops.eb(i, l, r);
-    }
+    build(array, 2*node, start, mid);
+    build(array, 2*node+1, mid+1, end);
 
-    whole(sort, ops);
+    // merge
+    segtree[node].resize(segtree[2*node].size() + segtree[2*node+1].size());
+    merge(segtree[2*node].begin(), segtree[2*node].end(),
+      segtree[2*node+1].begin(), segtree[2*node+1].end(),
+      segtree[node].begin());
+  }
 
-    ans.assign(q, 0);
+  // query over range [l, r] for count of elements < limit
+  int queryLT(int node, int start, int end, int l, int r, int limit) { // 1-based indexing
+    if(end < l or start > r)
+      return 0;
 
-    for(auto &op: ops) {
-      if(op.typ)
-        ans[op.idx] = ft.sum(op.l, op.r);
-      else {
-        if(last_seen_index.count(op.val))
-          ft.add(last_seen_index[op.val], -1);
+    if(l <= start and end <= r)
+      return distance(segtree[node].begin(), whole(lower_bound, segtree[node], limit));
 
-        ft.add(op.idx, 1);
-        last_seen_index[op.val] = op.idx;
-      }
-    }
+    int mid = start + (end - start) / 2;
 
-    for(auto &a: ans)
-      cout << a << "\n";
+    int leftCnt = queryLT(2*node, start, mid, l, r, limit);
+    int rightCnt = queryLT(2*node+1, mid+1, end, l, r, limit);
+
+    return leftCnt + rightCnt;
   }
 }
 
-namespace online_2D_BIT {
+namespace wavelet_tree {
+  // Lets you run order statistic queries on a value range [u, v]
 
-  constexpr int BIT_OFFSET = 2;
-
-  /*
-  Each Node in the Fenwick Tree stores two things:
-  - coordinate compressed list of all P[i] values that a Node (representing a prefix range) will ever see
-  - the second layer Fenwick Tree that is the actual frequency BIT over the coordinate compressed P[i]
-  */
   struct Node {
-    vector<int> coords, bit;
-
-    void enumerate(int val) { // val must already be in coords
-      auto it = whole(lower_bound, coords, val);
-      int idx = distance(coords.begin(), it) + 1;
-
-      for(; idx < bit.size(); idx += idx & -idx)
-        bit[idx]++;
-    }
-
-    int query_lt(int limit) {  // query number of elements < limit
-      auto it = whole(lower_bound, coords, limit);   // first index >= limit
-      int idx = distance(coords.begin(), it);  // idx+1 is the first index in BIT for element >= limit
-
-      int cnt = 0;
-
-      for(; idx > 0; idx -= idx & -idx)
-        cnt += bit[idx];
-
-      return cnt;
-    }
+    int lo, hi, // the lowest and highest value elements represented by this node
+      left_node, right_node;  // indices of subtree nodes
+    vector<int> kos; // prefix count of elements going to the left child. 1-based indexing
   };
 
-  int n, arr[MAXN];
-  Node ft[MAXN];
+  Node tree[2*MAXN];
+  int nodes_cnt = 0;
 
-  void introduce_val(int i, int val) {
-    for(; i<= n; i += i & -i)
-      ft[i].coords.push_back(val);
-  }
+  // build wavelet tree from array iterator range [from, to) for elements' value range [lo, hi]
+  int build(int* from, int *to, int lo, int hi) {
+    if(from >= to) return 0;
 
-  void register_val(int i, int val) {
-    for(; i<= n; i += i & -i)
-      ft[i].enumerate(val);
-  }
+    int curr = ++nodes_cnt;
+    auto &node = tree[curr];
 
-  // query prefix range [1, i] to get count of elements with value < lim;
-  int query_bit_prefix(int i, int lim) {
-    int res = 0;
+    // init curr node
+    node.lo = lo;
+    node.hi = hi;
 
-    for(; i > 0; i -= i & -i)
-      res += ft[i].query_lt(lim + BIT_OFFSET);
-
-    return res;
-  }
-
-  void preprocess_bit() {
-    // first pass - gather last seen for every element and introduce it to relevant Nodes
-    unordered_map<int, int> last_seen;
-
-    for(int i=0; i<n; i++) {
-      introduce_val(i+1, (last_seen.count(arr[i]) ? last_seen[arr[i]] : -1) + BIT_OFFSET);
-      last_seen[arr[i]] = i;
+    if(lo == hi) {  // leaf node
+      node.left_node = node.right_node = -1;
+      return curr;
     }
 
-    // second pass - normalize and compress coordinates in each Node
-    for(int i=1; i<=n; i++) {
-      auto &node = ft[i];
+    // build the kos prefix array
+    node.kos.reserve(to - from + 1);
+    node.kos.pb(0);
 
-      whole(sort, node.coords);
-      node.coords.erase(whole(unique, node.coords), node.coords.end());
+    int mid = lo + (hi - lo) / 2;
+    for(auto it = from; it != to; it++)
+      node.kos.pb(node.kos.back() + (*it <= mid));
 
-      node.bit.assign(node.coords.size()+1, 0);
-    }
+    // partition elements into <= mid and > mid
+    auto pivot = stable_partition(from, to, [=](const int &x) {
+      return x <= mid;
+    });
+
+    // build subtrees
+    node.left_node = build(from, pivot, lo, mid);
+    node.right_node = build(pivot, to, mid+1, hi);
+
+    return curr;
   }
 
-  void insert_into_bit() {
-    // third pass - actually insert each element's last seen 
-    unordered_map<int, int> last_seen;
+  // query curr subtree for count of elements in index range [l, r] which are < k
+  int query_LTk(int curr, int l, int r, int k) {
+    if(l > r || !curr)
+      return 0;
 
-    for(int i=0; i<n; i++) {
-      register_val(i+1, (last_seen.count(arr[i]) ? last_seen[arr[i]] : -1) + BIT_OFFSET);
-      last_seen[arr[i]] = i;
-    }
+    auto& node = tree[curr];
+
+    // if lowest item of node >= k, none of this node's items are useful
+    if(node.lo >= k)
+      return 0;
+
+    // if highest item of node < k, this entire node's items are useful
+    if(node.hi < k)
+      return r - l + 1;
+
+    int lkos = node.kos[l-1];
+    int rkos = node.kos[r];
+
+    // recurse subtrees
+    int left_cnt = query_LTk(node.left_node, lkos+1, rkos, k);
+    int right_cnt = query_LTk(node.right_node, l-lkos, r-rkos, k);
+
+    return left_cnt + right_cnt;
+  }
+}
+
+void preprocess() {
+  unordered_map<int, int> last_seen;
+
+  for(int i=0; i<n; i++) {
+    p[i] = (last_seen.count(arr[i]) ? last_seen[arr[i]] : -1);
+    last_seen[arr[i]] = i;
   }
 
-  /*
-  query index range [l, r] to get count of elements with value < lim
-  l and r are 1-based indices.
-  */
-  int query_bit_range(int l, int r, int lim) {
-    return query_bit_prefix(r, lim) - query_bit_prefix(l-1, lim);
-  }
+  // merge_sort_tree::build(p, 1, 1, n);
+  wavelet_tree::build(p, p+n, -1, n-1);
+}
 
-  void solve() {
-    int q, l, r;
-
-    cin >> n;
-
-    for(int i=0; i<n; i++)
-      cin >> arr[i];
-
-    preprocess_bit();
-    insert_into_bit();
-
-    cin >> q;
-
-    while(q--) {
-      cin >> l >> r;
-
-      cout << query_bit_range(l, r, l-1) << "\n"; // l and r are 1-based indices, hence we need to count elements <= l-2 in range arr[l-1..r-1]
-    }
-  }
+int query_range(int l, int r) { // 1-indexed range [l, r]
+  // return merge_sort_tree::queryLT(1, 1, n, l, r, l-1);
+  return wavelet_tree::query_LTk(1, l, r, l-1);
 }
 
 int main() {
   // ios_base::sync_with_stdio(false); // for fast I/O
   // cin.tie(NULL); // for fast I/O; remember to flush cout before subsequent uses of cin
 
-  // offline_1D_BIT::solve();
-  online_2D_BIT::solve();
+  int q, l, r;
+
+  cin >> n;
+
+  for(int i=0; i<n; i++)
+    cin >> arr[i];
+
+  preprocess();
+
+  cin >> q;
+
+  while(q--) {
+    cin >> l >> r;
+
+    cout << query_range(l, r) << "\n";
+  }
 
   return 0;
 }

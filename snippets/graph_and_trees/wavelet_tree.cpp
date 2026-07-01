@@ -1,6 +1,6 @@
 /**
- * Wavelet tree (aka Merge Sort Tree)
- * Ref: https://users.dcc.uchile.cl/~jperez/papers/ioiconf16.pdfgg
+ * Wavelet tree (compatriot of the Merge Sort Tree)
+ * Ref: https://users.dcc.uchile.cl/~jperez/papers/ioiconf16.pdf
  * Ref: http://rachitiitr.blogspot.com/2017/06/wavelet-trees-wavelet-trees-editorial.html
  */
 
@@ -18,7 +18,7 @@ static const long long INFLL = 0x3f3f3f3f3f3f3f3fLL;
 #define debug(x) cerr << #x << " : " << x << endl;
 #define whole(func, x, ...) ([&](decltype((x)) var) { return (func)(begin(var), end(var), ##__VA_ARGS__); })(x)
 
-// Wavelet tree / Merge-sort tree (1-idx based)
+// Wavelet tree (1-idx based)
 struct wavelet_tree {
   int lo, hi;                            // elements are in the range [lo, hi]
   wavelet_tree *left = 0, *right = 0;    // left[] represents all elements <= mid, right[] represents the rest
@@ -90,18 +90,18 @@ struct wavelet_tree {
   }
 
   // count of elements in index range [l, r] which are > k
-  int GEk(int l, int r, int k) {
+  int GTk(int l, int r, int k) {
     if(l > r or hi <= k) return 0;
     if(k < lo) return r-l+1;
 
     int lkos = kos[l-1];
     int rkos = kos[r];
 
-    return left->GEk(lkos+1, rkos, k) + right->GEk(l-lkos, r-rkos, k);
+    return left->GTk(lkos+1, rkos, k) + right->GTk(l-lkos, r-rkos, k);
   }
 
   // count of elements in index range [l, r] which are == k
-  int cntk(int l, int r, int k) {
+  int EQk(int l, int r, int k) {
     if(l > r or k < lo or k > hi) return 0;
     if(lo == hi) return r-l+1;    // lo == hi == k
 
@@ -110,9 +110,9 @@ struct wavelet_tree {
     int mid = lo + (hi-lo)/2;
 
     if(k <= mid)
-      return left->cntk(lkos+1, rkos, k);
+      return left->EQk(lkos+1, rkos, k);
     else
-      return right->cntk(l-lkos, r-rkos, k);
+      return right->EQk(l-lkos, r-rkos, k);
   }
 
   // count of elements in index range [l, r] which fall in value range [u, v]
@@ -147,23 +147,23 @@ int main() {
 
   cout << pretty_print_array(arr, 7) << endl;
 
-  wavelet_tree T(arr, arr+7, 0, 10);
+  wavelet_tree tree(arr, arr+7, 0, 10);
 
-  cout << "kth smallest element in [5, 7] for k == 1: " << T.kth(5, 7, 1) << endl;
-  cout << "kth smallest element in [5, 7] for k == 2: " << T.kth(5, 7, 2) << endl;
-  cout << "kth smallest element in [1, 7] for k == 2: " << T.kth(1, 7, 2) << endl;
-  cout << "kth smallest element in [1, 4] for k == 3: " << T.kth(1, 4, 3) << endl;
+  cout << "kth smallest element in arr[5..7] for k == 1: " << tree.kth(5, 7, 1) << endl;
+  cout << "kth smallest element in arr[5..7] for k == 2: " << tree.kth(5, 7, 2) << endl;
+  cout << "kth smallest element in arr[1..7] for k == 2: " << tree.kth(1, 7, 2) << endl;
+  cout << "kth smallest element in arr[1..4] for k == 3: " << tree.kth(1, 4, 3) << endl;
 
-  cout << "count of elements <= k in [2, 6] for k == 4: " << T.LTEk(2, 6, 4) << endl;
-  cout << "count of elements <= k in [1, 7] for k == 3: " << T.LTEk(1, 7, 3) << endl;
+  cout << "count of elements <= k in arr[2..6] for k == 4: " << tree.LTEk(2, 6, 4) << endl;
+  cout << "count of elements <= k in arr[1..7] for k == 3: " << tree.LTEk(1, 7, 3) << endl;
 
-  cout << "count of elements == k in [1, 7] for k == 3: " << T.cntk(1, 7, 3) << endl;
-  cout << "count of elements == k in [2, 4] for k == 2: " << T.cntk(2, 4, 2) << endl;
+  cout << "count of elements == k in arr[1..7] for k == 3: " << tree.EQk(1, 7, 3) << endl;
+  cout << "count of elements == k in arr[2..4] for k == 2: " << tree.EQk(2, 4, 2) << endl;
 
-  cout << "sum of elements <= k in [2, 6] for k == 4: " << T.sumLTEk(2, 6, 4) << endl;
-  cout << "sum of elements <= k in [1, 7] for k == 3: " << T.sumLTEk(1, 7, 3) << endl;
+  cout << "sum of elements <= k in arr[2..6] for k == 4: " << tree.sumLTEk(2, 6, 4) << endl;
+  cout << "sum of elements <= k in arr[1..7] for k == 3: " << tree.sumLTEk(1, 7, 3) << endl;
 
-  cout << pretty_print_array(arr, 7) << endl;  // this should be sorted
+  cout << pretty_print_array(arr, 7) << endl;  // this should be sorted now
 
   return 0;
 }

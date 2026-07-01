@@ -22,7 +22,7 @@ static const long long INFLL = 0x3f3f3f3f3f3f3f3fLL;
 int arr[30010];
 static const int SIGMA = 1e9 + 10;
 
-// Wavelet tree / Merge-sort tree (1-idx based)
+// Wavelet tree (1-idx based)
 struct wavelet_tree {
   int lo, hi;                    // elements are in the range [lo, hi]
   wavelet_tree *left = 0, *right = 0;    // left[] represents all elements <= mid, right[] represents the rest

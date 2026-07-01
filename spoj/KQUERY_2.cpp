@@ -23,7 +23,7 @@ using namespace std;
 constexpr int MAXN = 30004;
 constexpr int SIGMA = 1e9 + 3;
 
-// Wavelet tree / Merge-sort tree (1-idx based)
+// Wavelet tree (1-idx based)
 struct wavelet_tree {
   int lo, hi;                            // elements are in the range [lo, hi]
   wavelet_tree *left = 0, *right = 0;    // left[] represents all elements <= mid, right[] represents the rest

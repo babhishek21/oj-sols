@@ -48,5 +48,6 @@ test.*
 # custom for (my)make and other build systems
 *.bin
 
-# ignore any test folders
+# ignore any test or todo items
 test
+*.todo.*

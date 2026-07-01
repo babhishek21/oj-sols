@@ -22,7 +22,7 @@ CXX = g++
 JAVAC = javac
 
 # Default compiler flags
-CXXFLAGS = -std=c++17 -O2
+CXXFLAGS = -std=c++17 -O2 -I/usr/local/include
 
 # PCH Logic (Mac/Clang only)
 IS_CLANG := $(shell $(CXX) --version 2>/dev/null | grep -i clang)

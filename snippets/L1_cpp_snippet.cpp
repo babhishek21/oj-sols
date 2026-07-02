@@ -25,7 +25,7 @@ pow2f == bit_floor(n)
 
 To make Frequency BIT:
   add(val, 1) for each element → an order-statistic tree.
-  kth smallest element = max_prefix(k-1)   (compressed to 0..n-1)
+  kth smallest element = max_prefix(k-1) + 1  (compressed to 0..n-1)
 */
 template <typename T> struct BIT {
   int n; vector<T> tree; int pow2f;
@@ -35,7 +35,7 @@ template <typename T> struct BIT {
   T sum(int i) { T s = 0; for (; i > 0; i -= i & -i) s += tree[i]; return s; }
   T sum(int l, int r) { return sum(r) - sum(l - 1); }
 
-  int max_prefix(T c) {
+  int max_prefix(T c) { // max i for which prefix sum [1..i] <= c
     T v{}; int at = 0;
     for (int len = pow2f; len; len >>= 1)
       if (at + len <= n && v + tree[at + len] <= c)
@@ -147,8 +147,9 @@ int main() {
   // freq.add(3, 1); freq.add(3, 1); freq.add(3, 1); // value 3 appears 3 times
   freq.add(5, 1);                                     // value 5 appears 1 time
   freq.add(7, 1);                                     // value 7 appears 1 time
-  cout << "freq BIT kth(1) = " << freq.max_prefix(0) << "\n"; // 1st smallest = 3
-  cout << "freq BIT kth(4) = " << freq.max_prefix(3) << "\n"; // 4th smallest = 5
+  cout << "freq BIT internal: " << freq.tree << "\n";
+  cout << "freq BIT kth(1) = " << freq.max_prefix(0)+1 << "\n"; // 1st smallest = 3
+  cout << "freq BIT kth(4) = " << freq.max_prefix(3)+1 << "\n"; // 4th smallest = 5
 
   // --- coordinate compression demo ---
   vector<int> vals = {100, 50, 100, 25, 50};
